@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="97">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+      <itemPath>Enemie.h</itemPath>
+      <itemPath>Flamme.h</itemPath>
+      <itemPath>Guerrier.h</itemPath>
+      <itemPath>Hache.h</itemPath>
+      <itemPath>Joueur.h</itemPath>
+      <itemPath>Mage.h</itemPath>
+      <itemPath>Map.h</itemPath>
+      <itemPath>ObAttaquer.h</itemPath>
+      <itemPath>PersonnageBase.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ResourceFiles"
+                   displayName="Resource Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <itemPath>Enemie.cpp</itemPath>
+      <itemPath>Flamme.cpp</itemPath>
+      <itemPath>Guerrier.cpp</itemPath>
+      <itemPath>Hache.cpp</itemPath>
+      <itemPath>Joueur.cpp</itemPath>
+      <itemPath>Mage.cpp</itemPath>
+      <itemPath>Map.cpp</itemPath>
+      <itemPath>ObAttaquer.cpp</itemPath>
+      <itemPath>PersonnageBase.cpp</itemPath>
+      <itemPath>main.cpp</itemPath>
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Test Files"
+                   projectFiles="false"
+                   kind="TEST_LOGICAL_FOLDER">
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>.</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <ccTool>
+          <incDir>
+            <pElem>/usr/local/include/SFML</pElem>
+          </incDir>
+        </ccTool>
+        <linkerTool>
+          <linkerAddLib>
+            <pElem>/usr/local/lib</pElem>
+          </linkerAddLib>
+          <linkerLibItems>
+            <linkerLibLibItem>sfml-graphics-d</linkerLibLibItem>
+            <linkerLibLibItem>sfml-window-d</linkerLibLibItem>
+            <linkerLibLibItem>sfml-system-d</linkerLibLibItem>
+            <linkerLibLibItem>sfml-audio-d</linkerLibLibItem>
+            <linkerLibLibItem>sfml-network-d</linkerLibLibItem>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+      <item path="Enemie.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Enemie.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Flamme.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Flamme.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Guerrier.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Guerrier.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Hache.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Hache.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Joueur.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Joueur.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Mage.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Mage.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Map.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Map.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="ObAttaquer.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="ObAttaquer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="PersonnageBase.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="PersonnageBase.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+    </conf>
+    <conf name="Release" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+          <incDir>
+            <pElem>/usr/local/include/SFML</pElem>
+          </incDir>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+        <linkerTool>
+          <linkerAddLib>
+            <pElem>/usr/local/lib</pElem>
+          </linkerAddLib>
+          <linkerLibItems>
+            <linkerLibLibItem>sfml-graphics-d</linkerLibLibItem>
+            <linkerLibLibItem>sfml-window-d</linkerLibLibItem>
+            <linkerLibLibItem>sfml-system-d</linkerLibLibItem>
+            <linkerLibLibItem>sfml-audio-d</linkerLibLibItem>
+            <linkerLibLibItem>sfml-network-d</linkerLibLibItem>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+      <item path="Enemie.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Enemie.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Flamme.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Flamme.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Guerrier.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Guerrier.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Hache.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Hache.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Joueur.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Joueur.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Mage.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Mage.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Map.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Map.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="ObAttaquer.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="ObAttaquer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="PersonnageBase.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="PersonnageBase.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>
