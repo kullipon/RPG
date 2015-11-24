@@ -10,7 +10,7 @@ class Flamme
 {
 public:
 	Flamme();
-	Flamme(sf::RenderWindow &window,Enemie *teki,Map &map,int x, int y,bool &brulerArbreAnimFini);
+	Flamme(Enemie *teki,int x, int y);
 	~Flamme();
 
 	int get_autorisationCase();
@@ -19,8 +19,10 @@ public:
 	bool get_destructionArbre();
 	
 
-	void brulerArbre(sf::RenderWindow &window, Enemie *teki, Map &map, int x,int y,bool &brulerArbreAnimFini);
-	
+                void brulerArbre(sf::RenderWindow &window, Enemie *teki, Map &map,bool &brulerArbreAnimFini);
+                void verifDeplacement(sf::RenderWindow &window,Enemie *teki,Map &map,bool &brulerArbreAnimFini);
+        
+
 
 private:
 
@@ -30,7 +32,8 @@ private:
 	double m_deplacement;
 	int m_verifPosX;
 	int m_verifPosY;
-	int m_autorisationCase;
+	int m_autorisationCaseX;
+                  int m_autorisationCaseY;
 	char m_verifCaseMap;
 	char m_direction;
 	sf::Time m_time;

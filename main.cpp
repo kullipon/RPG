@@ -171,6 +171,7 @@ int main()
 				clockJoueur.restart();
 
 			}
+                        
 
 			float axeX = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
 			float axeY = sf::Joystick::getAxisPosition(0, sf::Joystick::Y);

@@ -381,21 +381,27 @@ void Enemie::attaque(sf::RenderWindow &window, Enemie *teki, Map &map,Flamme *fl
 		teki->set_animAttaqueFini(false);
 		bClock.restart();
 
-		if (flamme1 == 0 && flamme1->get_destructionArbre() == false) // SI FLAMME == 0 ET DESTRUCTION ARBRE  EST FALSE, ON LA CREER
+		if (flamme1 == 0 ) // SI FLAMME == 0 , ON LA CREER
 		{
-			flamme1 = new Flamme(window, teki, map, m_realX, m_realY, brulerArbreAnimFini);
+                                        flamme1 = new Flamme(teki, m_realX, m_realY);
+                        
+                                        flamme1->verifDeplacement(sf::RenderWindow &window,Enemie *teki,Map &map,brulerArbreAnimFini);
 
 		}
-		else if (flamme1 != 0 && flamme1->get_alive() == true) //SINON ON VERIFIE SI IL EST BIEN ALIVE ET ON FAIT L'ANIM
+                
+                   } // FIN INIT
+        
+                  else if (teki->get_animAttaqueFini() == false  && teki->get_demandeAttaque() == true) // ATTAQUE EN COURS = UPDATE ATTAQUE
+                  {
+        
+		 if (flamme1 != 0 && flamme1->get_alive() == true) //ON VERIFIE SI IL FLAMME EST BIEN ALIVE ET ON VERIF DEPLACEMENT
 		{
 			/* -----------  ANIMATION ---------------   */
-
-			if (flamme1 != 0 && flamme1->get_autorisationCase() > 0)
-			{
-
-			}
+                                               
+                                     flamme1->verifDeplacement(sf::RenderWindow &window,Enemie *teki,Map &map,brulerArbreAnimFini);
+			
 		}
-		else if (flamme1->get_alive() == false && flamme1->get_destructionArbre() == true) //SI FLAMME ALIVE ET ORDRE DE DESTRUCTION ARBRE EST TRUE
+		else if (flamme1 != 0 && flamme1->get_alive() == false && flamme1->get_destructionArbre() == true) //SI FLAMME NOT ALIVE ET ORDRE DE DESTRUCTION ARBRE EST TRUE
 		{
 
 			//ON BRULE L'ARBRE
@@ -403,7 +409,7 @@ void Enemie::attaque(sf::RenderWindow &window, Enemie *teki, Map &map,Flamme *fl
 			
 		}
 
-		if (flamme1->get_alive() == false && brulerArbreAnimFini == true) //SI FLAMME DEAD ET ANIM ARBRE EN FEU EST FINI: 
+		if (flamme1 != 0 && flamme1->get_alive() == false && brulerArbreAnimFini == true) //SI FLAMME DEAD ET ANIM ARBRE EN FEU EST FINI: 
 		{
 			//ON KILL LA FLAMME
 
@@ -411,8 +417,8 @@ void Enemie::attaque(sf::RenderWindow &window, Enemie *teki, Map &map,Flamme *fl
 			flamme1 = 0;
 
 		}
-	}
-
+	
+                       } 
 
 	b = bClock.getElapsedTime();
 	char test = '1';

@@ -74,7 +74,7 @@ sf::Sprite transeSprite;
 bool animDegatsON;
 bool m_attacked;
 bool m_boss;
-bool m_demandeAttaque;
+bool m_demandeAttaque; 
 bool m_transeUP;
 bool m_animTranseFini;
 bool m_animAttaqueFini;
