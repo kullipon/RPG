@@ -12,6 +12,7 @@
 #include <time.h>
 #include <cstdlib>
 
+
 //#include <thread>
 //#include <mutex>
 #include "ObAttaquer.h"
@@ -21,6 +22,7 @@
 
 bool deplacementOK(false);
 bool attaquer(false);
+
 
 int main()
 {
@@ -45,9 +47,9 @@ int main()
 	Enemie *peppa = 0;
 	bool peppaPopped = false;
 
-	Flamme *flamme1 = 0;
+	
 
-
+                 
 
 
 
@@ -357,20 +359,40 @@ int main()
 	{
 		teki1->affichage(window, teki1);
 		teki2->affichage(window, teki2);
-		map.temps(teki1, teki2, time, clock, window); // Fonction qui SET boule_UP = TRUE 
+		map.temps(teki1, teki2, time, clock, window); // Fonction qui  SET demandeAttaque = TRUE 
 
 		if (teki1->get_demandeAttaque() == true)
 		{
+		    
+		    
+		     if (  teki2->get_brulerArbreAnimFini()  == true &&  teki2->get_animTranseFini() == true )
+		     {
 			teki1->animTranse(window, teki1);
-			teki1->attaque(window, teki1, map, flamme1);
+			teki1->attaque(window, teki1, map);
+			
+			if (teki1->get_animAttaqueFini())
+			{
+			     teki2->set_autorisationShoot(true);
+			}
+		     }
+			
 
 		}
 
-		if (teki2->get_demandeAttaque() == true)
+		if (teki2->get_demandeAttaque() == true )
 		{
+		       if (teki1->get_brulerArbreAnimFini() == true && teki1->get_animTranseFini() == true)
+		     {
+					     
 			teki2->animTranse(window, teki2);
-			teki2->attaque(window, teki2, map, flamme1);
-
+			teki2->attaque(window, teki2, map);
+			
+			  if (teki2->get_animAttaqueFini())
+			{
+			     teki1->set_autorisationShoot(true);
+			}
+			
+		       }
 		}
 
 
@@ -404,16 +426,30 @@ int main()
 
 	if (teki1 != 0)
 	{
-		delete teki1;
-		teki1 = 0;
+                       if (teki1->get_flamme() != 0)
+                         {
+                           teki1->killFlamme();
+                         }
+                    delete teki1;
+                    teki1 = 0;
+        
 	}
 	if (teki2 != 0)
 	{
+                         if (teki2->get_flamme() != 0)
+                         {
+                           teki2->killFlamme();
+                         }
 		delete teki2;
 		teki2 = 0;
 	}
 	if (peppa != 0)
 	{
+            
+                        if (peppa->get_flamme() != 0)
+                         {
+                          peppa->killFlamme();
+                         }
 		delete peppa;
 		peppa = 0;
 
