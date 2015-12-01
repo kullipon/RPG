@@ -1,11 +1,14 @@
 #include "Flamme.h"
 int fBoucle = 0;
+sf::Time fTime;
+#include <cmath>
 
-Flamme::Flamme() : m_posFlammeX(0), m_posFlammeY(0), m_autorisationCaseX(0),m_autorisationCaseY(0), m_alive(true), m_direction(0),m_destructionArbre(false), m_posArbreX(0),m_posArbreY(0)
+
+Flamme::Flamme() : m_posFlammeX(0), m_posFlammeY(0), m_autorisationCaseX(0),m_autorisationCaseY(0), m_alive(true), m_direction(0),m_destructionArbre(false), m_posArbreX(0),m_posArbreY(0),m_boucleAff(0)
 {
 	m_verifPosX = 0;
 	m_verifPosY = 0;
-	m_time = m_clock.getElapsedTime();
+	//m_time = m_clock.getElapsedTime();
 	
 	
 }
@@ -15,10 +18,17 @@ Flamme::~Flamme()
 {
 }
 
-int Flamme::get_autorisationCase()
+int Flamme::get_autorisationCaseX()
 {
-	return m_autorisationCase;
+    return m_autorisationCaseX;
 
+}
+
+int Flamme::get_autorisationCaseY()
+{
+    
+    return m_autorisationCaseY;
+    
 }
 
 bool Flamme::get_alive()
@@ -41,7 +51,7 @@ bool Flamme::get_destructionArbre()
 
 }
 
-Flamme::Flamme( Enemie *teki, int x, int y) : m_autorisationCaseX(0), m_autorisationCaseY(0), m_deplacement(0.0), m_posFlammeX(x), m_posFlammeY(y),m_alive(true), m_direction(0), m_destructionArbre(false),m_posArbreX(0),m_posArbreY(0)
+Flamme::Flamme( Enemie *teki, int x, int y) : m_autorisationCaseX(0), m_autorisationCaseY(0), m_deplacement(0.0), m_posFlammeX(x), m_posFlammeY(y),m_alive(true), m_direction(0), m_destructionArbre(false),m_posArbreX(0),m_posArbreY(0),m_boucleAff(0)
 {
 
 	
@@ -52,19 +62,20 @@ Flamme::Flamme( Enemie *teki, int x, int y) : m_autorisationCaseX(0), m_autorisa
 	m_verifPosY = m_posFlammeY;
 	m_verifPosY %= 32;
 
-	m_time = m_clock.getElapsedTime();
+	
+	m_deplacement = fTime.asMilliseconds() * 0.064;
 
-	m_deplacement = m_time.asMilliseconds() * 0.064;
+                    char direction = 0;
 
-
-
-	char direction = teki->getDirection();
+	direction = teki->getDirection();
 
 	switch (direction)
 	{
 
 	case 'N':
 		m_direction = 'N';
+		
+		
 
 		break;
 
@@ -82,16 +93,24 @@ Flamme::Flamme( Enemie *teki, int x, int y) : m_autorisationCaseX(0), m_autorisa
                                     break;
 
 	}//FIN SWITCH
+	
+	
         
 }
 
 
-void Flamme::brulerArbre(sf::RenderWindow &window, Enemie *teki, Map &map,bool &brulerArbreAnimFini)
+void Flamme::brulerArbre(sf::RenderWindow &window, Enemie *teki, Map &map)
 {
+                  //  fClock = teki->get_flamme()->fClock;
+                   fTime = fClock.getElapsedTime();
+	m_posArbreX = teki->get_flamme()->m_posArbreX;
+	m_posArbreY = teki->get_flamme()->m_posArbreY;
+	  
 
-	if (brulerArbreAnimFini == true)
+	if (teki->get_brulerArbreAnimFini() == true )
 	{
-		brulerArbreAnimFini = false;
+		teki->set_brulerArbreAnimFini(false);
+                                    fClock.restart();
 
 		map.arbreEnFeu_1.setPosition((float)m_posArbreX, (float)m_posArbreY);
 		map.arbreEnFeu_2.setPosition((float)m_posArbreX, (float)m_posArbreY);
@@ -99,34 +118,32 @@ void Flamme::brulerArbre(sf::RenderWindow &window, Enemie *teki, Map &map,bool &
 
 	}
 
-	if (m_time.asMilliseconds() < 800)
+	if (fTime.asMilliseconds() < 800)
 	{
 
 		window.draw(map.arbreEnFeu_1);
 
 	}
-	else if (m_time.asMilliseconds() > 800 && m_time.asMilliseconds() < 1600)
+	else if (fTime.asMilliseconds() > 800 && fTime.asMilliseconds() < 1600)
 	{
 
 		window.draw(map.arbreEnFeu_2);
 
 	}
-	else if (m_time.asMilliseconds() > 1600)
+	else if (fTime.asMilliseconds() > 1600)
 	{
 
-		m_clock.restart();
+                                    fClock.restart();
 		fBoucle++;
 
 		if (fBoucle == 2)
 		{
-			teki->set_demandeAttaque(false);
+			//teki->set_demandeAttaque(false);
 			teki->set_animAttaqueFini(true);
-			brulerArbreAnimFini = true;
-			m_autorisationCaseX = 0;
-                                                      m_autorisationCaseY = 0;
+			teki->set_brulerArbreAnimFini(true);
 			m_alive = false;
 
-			if (map.setPosArbreVersSable(m_posArbreX/ 32, m_posArbreY / 32) == true)
+			if (map.setPosArbreVersSable((int)(m_posArbreX/ 32), (int)(m_posArbreY / 32)) == true)
 			{
 				std::cout << "ARBRE REMPLACED PAR SABLE !" << std::endl;
 				
@@ -143,35 +160,58 @@ void Flamme::brulerArbre(sf::RenderWindow &window, Enemie *teki, Map &map,bool &
 
 }
 
-void Flamme::verifDeplacement(sf::RenderWindow &window,Enemie *teki,Map &map,bool &brulerArbreAnimFini)
+void Flamme::verifDeplacement(Enemie *teki,Map &map)
 {
+    
+                                 int posX =  m_posFlammeX+ m_autorisationCaseX+32;
+                                                                
+                                    if ((int)(posX/32 ) > 10)           //AVANT TOUTE VERIF ON CHECK SI ON SORT PAS DU CADRE DE JEU
+                                         {
+			 
+                                         teki->get_flamme()->m_alive = false;
+					 
+		    teki->set_demandeAttaque(false);
+		     
+                                          teki->set_animAttaqueFini(true);
+                                                                             
+                                           return ;
+                                           }
+    
     
                                 if (m_verifPosY > 16)
 		{
-			m_verifCaseMap = map.getLevel1Pos((m_posFlammeX + 32  + m_autorisationCaseX) / 32, (m_posFlammeY + 32) / 32); //VERIF CASE X+32, Y+32
+			m_verifCaseMap = map.getLevel1Pos((int)((m_posFlammeX + 32  + m_autorisationCaseX) / 32), (int)((m_posFlammeY + 32) / 32)); //VERIF CASE X+32, Y+32
 
 			if (m_verifCaseMap == 'A') // SI ARBRE UP
 			{
 				//BRULER ARBRE
 				
 				m_destructionArbre = true;
-				m_alive = false;
-                                                                        m_posArbreX = m_posFlammeX +32 + m_autorisationCaseX;
-                                                                        m_posArbreY = m_posFlammeY + 32;
+				m_posArbreX = m_posFlammeX +32 + m_autorisationCaseX;
+				 m_posArbreY = m_posFlammeY + 32;
+				m_posArbreX = floor(m_posArbreX /32)*32;
+				m_posArbreY = ceil(m_posArbreY/32)*32;	
+				
+									   
+									
                                                                   
 			}
 			else if (m_verifCaseMap == '0') // SI DU SABLE DONC ON CHECK LA SUITE
 			{
-				m_verifCaseMap = map.getLevel1Pos((m_posFlammeX + 32 + m_autorisationCaseX) / 32, m_posFlammeY / 32); // CHECK LA CASE DU DESSUS SOIT X+32, Y
+                                                                           
+                                                        
+                                                                     
+				m_verifCaseMap = map.getLevel1Pos((int)((m_posFlammeX + 32 + m_autorisationCaseX) / 32), (int)(m_posFlammeY / 32)); // CHECK LA CASE DU DESSUS SOIT X+32, Y
 
 				if (m_verifCaseMap == 'A') // SI ARBRE UP
 				{
 					//BRULER ARBRE
 					
 					m_destructionArbre = true;
-					m_alive = false;
 					m_posArbreX = m_posFlammeX +32 + m_autorisationCaseX;
                                                                                           m_posArbreY = m_posFlammeY;
+					  m_posArbreX = floor(m_posArbreX/32)*32;
+					  m_posArbreY =  ceil(m_posArbreY/32)*32;
                                                                                            
 				}
 				else if (m_verifCaseMap == '0') // SINON AVANCE
@@ -189,7 +229,8 @@ void Flamme::verifDeplacement(sf::RenderWindow &window,Enemie *teki,Map &map,boo
                             
                                                          m_alive = false;
                                                          m_destructionArbre = false;
-                                                    
+                                                         teki->set_animAttaqueFini(true);
+                                                  
                             
                                                      }
 
@@ -198,7 +239,7 @@ void Flamme::verifDeplacement(sf::RenderWindow &window,Enemie *teki,Map &map,boo
 
 		else if (m_verifPosY <= 16)
 		{
-			m_verifCaseMap = map.getLevel1Pos((m_posFlammeX + 32 + m_autorisationCaseX) / 32, m_posFlammeY / 32); //VERIF CASE X+32, Y
+			m_verifCaseMap = map.getLevel1Pos((int)((m_posFlammeX + 32 + m_autorisationCaseX) / 32), (int)(m_posFlammeY / 32)); //VERIF CASE X+32, Y
 
 
 
@@ -208,21 +249,23 @@ void Flamme::verifDeplacement(sf::RenderWindow &window,Enemie *teki,Map &map,boo
 				//BRULER ARBRE
 				
 				m_destructionArbre = true;
-				m_alive = false;
-                                                                        m_posArbreX = m_posFlammeX +32 + m_autorisationCaseX;
+				 m_posArbreX = m_posFlammeX +32 + m_autorisationCaseX;
                                                                         m_posArbreY = m_posFlammeY;
+				m_posArbreY =  floor(m_posArbreY /32)*32;
+				m_posArbreX =  floor(m_posArbreX /32)*32;
 			}
 			else if (m_verifCaseMap == '0') // DU SABLE DONC ON CHECK LA SUITE
 			{
-				m_verifCaseMap = map.getLevel1Pos((m_posFlammeX + 32 + m_autorisationCaseX) / 32, (m_posFlammeY + 32) / 32); // CHECK LA CASE DU DESSUS SOIT X+32, Y+32
+				m_verifCaseMap = map.getLevel1Pos((int)((m_posFlammeX + 32 + m_autorisationCaseX) / 32), (int)((m_posFlammeY + 32) / 32)); // CHECK LA CASE DU DESSUS SOIT X+32, Y+32
 
 				if (m_verifCaseMap == 'A') // ARBRE UP
 				{
 					//BRULER ARBRE
 					m_destructionArbre = true;
-                                                                                          m_alive = false;
                                                                                           m_posArbreX = m_posFlammeX +32 + m_autorisationCaseX;
                                                                                           m_posArbreY = m_posFlammeY +32;
+					 m_posArbreY=  floor(m_posArbreY /32)*32;
+					m_posArbreX =  floor(m_posArbreX /32)*32;
 				}
 				else if (m_verifCaseMap == '0')
 				{
@@ -236,14 +279,75 @@ void Flamme::verifDeplacement(sf::RenderWindow &window,Enemie *teki,Map &map,boo
 
 			}
                                                      else // AUTRE CAS (MONTAGNE...)
-                                                     {
-                            
-                                                         m_alive = false;
+			 {
+			    teki->get_flamme()->m_alive = false;
+			
                                                          m_destructionArbre = false;
                                                     
                             
                                                      }
 		} //FIN DU DERNIER IF
                 
+    
+}
+
+
+void Flamme::affichage(sf::RenderWindow& window, Enemie* teki, Map& map)
+{
+                bool destructionArbre;
+	bool alive;	
+                
+    
+                destructionArbre = teki->get_flamme()->m_destructionArbre;
+	alive = teki->get_flamme()->m_alive;
+    
+                 if (destructionArbre == true || alive == false)
+                 {
+                     return;
+                                         
+                 }
+                        m_boucleAff = teki->get_flamme()->m_boucleAff;
+                
+                              if (m_boucleAff == 0) // INIT BOUCLE
+                             {
+                                  m_boucleAff++;
+                                  fClock.restart();
+                              }
+                        
+                fTime =fClock.getElapsedTime();
+                m_deplacement = fTime.asMilliseconds() * 0.032;
+	
+                if (fTime.asMilliseconds() <= 1000)
+                {
+                
+                    teki->boule_1.setPosition((float)( m_posFlammeX + m_deplacement+ m_autorisationCaseX), (float)m_posFlammeY);
+                    
+                    window.draw(teki->boule_1);
+                    
+                    
+                }
+                else if (fTime.asMilliseconds() > 1000 && fTime.asMilliseconds() < 2000)
+                {
+                    
+                    teki->boule_2.setPosition((float)( m_posFlammeX + m_deplacement+ m_autorisationCaseX), (float)m_posFlammeY);
+                    
+                    window.draw(teki->boule_2);
+                
+                    
+                }
+                else if (fTime.asMilliseconds() >= 2000)
+                {
+                    
+                    fClock.restart();
+                    //m_boucleAff = 0;
+                }
+                
+
+
+	
+    
+    
+    
+    
     
 }
