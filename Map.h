@@ -28,7 +28,7 @@ public:
 	//bool okForMove(PersonnageBase *perso,int x, int y,int axe);
 
 	bool okForMove(PersonnageBase *perso,char direction,int variation);
-	void temps(Enemie *teki1, Enemie *teki2, sf::Time &time, sf::Clock &clock, sf::RenderWindow &window);
+	void temps(Enemie *enemie, Enemie *teki2, sf::Time &time, sf::Clock &clock, sf::RenderWindow &window);
 	void temps(Enemie *teki, sf::Time &time, sf::Clock &clock, sf::RenderWindow &window);
 	
 	sf::Sprite arbreEnFeu_1;

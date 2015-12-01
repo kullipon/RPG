@@ -13,14 +13,16 @@ public:
 	Flamme(Enemie *teki,int x, int y);
 	~Flamme();
 
-	int get_autorisationCase();
+	int get_autorisationCaseX();
+                  int get_autorisationCaseY();
 	bool get_alive();
 	char get_direction();
 	bool get_destructionArbre();
 	
 
-                void brulerArbre(sf::RenderWindow &window, Enemie *teki, Map &map,bool &brulerArbreAnimFini);
-                void verifDeplacement(sf::RenderWindow &window,Enemie *teki,Map &map,bool &brulerArbreAnimFini);
+                void brulerArbre(sf::RenderWindow &window, Enemie *teki, Map &map);
+                void verifDeplacement(Enemie *teki,Map &map);
+                 void affichage(sf::RenderWindow &window, Enemie *teki,Map &map);
         
 
 
@@ -36,12 +38,14 @@ private:
                   int m_autorisationCaseY;
 	char m_verifCaseMap;
 	char m_direction;
-	sf::Time m_time;
-	sf::Clock m_clock;
+	
 	bool m_alive;
 	bool m_destructionArbre;
 	int m_posArbreX;
 	int m_posArbreY;
+                  int m_boucleAff;
+                  sf::Clock fClock;
 
 };
+
 

@@ -61,65 +61,65 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-L/usr/local/lib -lsfml-graphics-d -lsfml-window-d -lsfml-system-d -lsfml-audio-d -lsfml-network-d
+LDLIBSOPTIONS=-L/Documents/SFML-2.3.2/lib -lsfml-graphics -lsfml-window -lsfml-network -lsfml-system -lsfml-audio
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/rpg
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/rpg2
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/rpg: ${OBJECTFILES}
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/rpg2: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
-	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/rpg ${OBJECTFILES} ${LDLIBSOPTIONS}
+	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/rpg2 ${OBJECTFILES} ${LDLIBSOPTIONS}
 
 ${OBJECTDIR}/Enemie.o: Enemie.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/local/include/SFML -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Enemie.o Enemie.cpp
+	$(COMPILE.cc) -g -DSFML_STATIC -I/home/kullipon/Documents/SFML-2.3.2/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Enemie.o Enemie.cpp
 
 ${OBJECTDIR}/Flamme.o: Flamme.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/local/include/SFML -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Flamme.o Flamme.cpp
+	$(COMPILE.cc) -g -DSFML_STATIC -I/home/kullipon/Documents/SFML-2.3.2/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Flamme.o Flamme.cpp
 
 ${OBJECTDIR}/Guerrier.o: Guerrier.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/local/include/SFML -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Guerrier.o Guerrier.cpp
+	$(COMPILE.cc) -g -DSFML_STATIC -I/home/kullipon/Documents/SFML-2.3.2/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Guerrier.o Guerrier.cpp
 
 ${OBJECTDIR}/Hache.o: Hache.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/local/include/SFML -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Hache.o Hache.cpp
+	$(COMPILE.cc) -g -DSFML_STATIC -I/home/kullipon/Documents/SFML-2.3.2/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Hache.o Hache.cpp
 
 ${OBJECTDIR}/Joueur.o: Joueur.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/local/include/SFML -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Joueur.o Joueur.cpp
+	$(COMPILE.cc) -g -DSFML_STATIC -I/home/kullipon/Documents/SFML-2.3.2/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Joueur.o Joueur.cpp
 
 ${OBJECTDIR}/Mage.o: Mage.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/local/include/SFML -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Mage.o Mage.cpp
+	$(COMPILE.cc) -g -DSFML_STATIC -I/home/kullipon/Documents/SFML-2.3.2/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Mage.o Mage.cpp
 
 ${OBJECTDIR}/Map.o: Map.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/local/include/SFML -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Map.o Map.cpp
+	$(COMPILE.cc) -g -DSFML_STATIC -I/home/kullipon/Documents/SFML-2.3.2/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Map.o Map.cpp
 
 ${OBJECTDIR}/ObAttaquer.o: ObAttaquer.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/local/include/SFML -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ObAttaquer.o ObAttaquer.cpp
+	$(COMPILE.cc) -g -DSFML_STATIC -I/home/kullipon/Documents/SFML-2.3.2/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ObAttaquer.o ObAttaquer.cpp
 
 ${OBJECTDIR}/PersonnageBase.o: PersonnageBase.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/local/include/SFML -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/PersonnageBase.o PersonnageBase.cpp
+	$(COMPILE.cc) -g -DSFML_STATIC -I/home/kullipon/Documents/SFML-2.3.2/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/PersonnageBase.o PersonnageBase.cpp
 
 ${OBJECTDIR}/main.o: main.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/local/include/SFML -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
+	$(COMPILE.cc) -g -DSFML_STATIC -I/home/kullipon/Documents/SFML-2.3.2/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
 
 # Subprojects
 .build-subprojects:
@@ -127,7 +127,7 @@ ${OBJECTDIR}/main.o: main.cpp
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/rpg
+	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/rpg2
 
 # Subprojects
 .clean-subprojects:

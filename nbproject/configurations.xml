@@ -58,19 +58,22 @@
       <compileType>
         <ccTool>
           <incDir>
-            <pElem>/usr/local/include/SFML</pElem>
+            <pElem>/home/kullipon/Documents/SFML-2.3.2/include</pElem>
           </incDir>
+          <preprocessorList>
+            <Elem>SFML_STATIC</Elem>
+          </preprocessorList>
         </ccTool>
         <linkerTool>
           <linkerAddLib>
-            <pElem>/usr/local/lib</pElem>
+            <pElem>/Documents/SFML-2.3.2/lib</pElem>
           </linkerAddLib>
           <linkerLibItems>
-            <linkerLibLibItem>sfml-graphics-d</linkerLibLibItem>
-            <linkerLibLibItem>sfml-window-d</linkerLibLibItem>
-            <linkerLibLibItem>sfml-system-d</linkerLibLibItem>
-            <linkerLibLibItem>sfml-audio-d</linkerLibLibItem>
-            <linkerLibLibItem>sfml-network-d</linkerLibLibItem>
+            <linkerLibLibItem>sfml-graphics</linkerLibLibItem>
+            <linkerLibLibItem>sfml-window</linkerLibLibItem>
+            <linkerLibLibItem>sfml-network</linkerLibLibItem>
+            <linkerLibLibItem>sfml-system</linkerLibLibItem>
+            <linkerLibLibItem>sfml-audio</linkerLibLibItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
@@ -126,7 +129,7 @@
         <ccTool>
           <developmentMode>5</developmentMode>
           <incDir>
-            <pElem>/usr/local/include/SFML</pElem>
+            <pElem>/home/kullipon/Documents/SFML-2.3.2/include</pElem>
           </incDir>
         </ccTool>
         <fortranCompilerTool>
@@ -137,7 +140,7 @@
         </asmTool>
         <linkerTool>
           <linkerAddLib>
-            <pElem>/usr/local/lib</pElem>
+            <pElem>/Documents/SFML-2.3.2/lib</pElem>
           </linkerAddLib>
           <linkerLibItems>
             <linkerLibLibItem>sfml-graphics-d</linkerLibLibItem>

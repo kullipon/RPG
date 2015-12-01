@@ -3,7 +3,6 @@
 #include "Map.h"
 
 
-
 Hache::Hache()
 {
 m_posX=0;
@@ -144,7 +143,7 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto, Map &map, sf::RenderWi
 			}
 			
 
-			spHache1.setPosition((float)m_posX, (float)m_posY); //*32 enlevé
+			spHache1.setPosition((float)m_posX, (float)m_posY); //*32 enlevï¿½
 			window.draw(spHache1);
 
 		}
@@ -166,7 +165,7 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto, Map &map, sf::RenderWi
 				return;
 			}
 			
-			spHache2.setPosition((float)m_posX, (float)m_posY);//*32 enlevé
+			spHache2.setPosition((float)m_posX, (float)m_posY);//*32 enlevï¿½
 			window.draw(spHache2);
 
 		}
@@ -186,7 +185,7 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto, Map &map, sf::RenderWi
 				toto->supprimerHache();
 				return;
 			}
-			spHache3.setPosition((float)m_posX, (float)m_posY);//*32 enlevé
+			spHache3.setPosition((float)m_posX, (float)m_posY);//*32 enlevï¿½
 			window.draw(spHache3);
 
 		}
@@ -205,7 +204,7 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto, Map &map, sf::RenderWi
 				toto->supprimerHache();
 				return;
 			}
-			spHache4.setPosition((float)m_posX, (float)m_posY);//*32 enlevé
+			spHache4.setPosition((float)m_posX, (float)m_posY);//*32 enlevï¿½
 			window.draw(spHache4);
 
 		}
@@ -223,7 +222,7 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto, Map &map, sf::RenderWi
 				return;
 			}
 			
-			spHache1.setPosition((float)m_posX, (float)m_posY);//*32 enlevé
+			spHache1.setPosition((float)m_posX, (float)m_posY);//*32 enlevï¿½
 			window.draw(spHache1);
 		}
 
@@ -248,7 +247,7 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto, Map &map, sf::RenderWi
 				boucleH++;
 			}
 			
-			spHache1.setPosition((float)m_posX, (float)m_posY); //*32 enlevé
+			spHache1.setPosition((float)m_posX, (float)m_posY); //*32 enlevï¿½
 			window.draw(spHache1);
 
 		}
@@ -270,7 +269,7 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto, Map &map, sf::RenderWi
 				return;
 			}
 			
-			spHache2.setPosition((float)m_posX, (float)m_posY);//*32 enlevé
+			spHache2.setPosition((float)m_posX, (float)m_posY);//*32 enlevï¿½
 			window.draw(spHache2);
 
 		}
@@ -291,7 +290,7 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto, Map &map, sf::RenderWi
 				return;
 			}
 			
-			spHache3.setPosition((float)m_posX, (float)m_posY);//*32 enlevé
+			spHache3.setPosition((float)m_posX, (float)m_posY);//*32 enlevï¿½
 			window.draw(spHache3);
 
 		}
@@ -311,7 +310,7 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto, Map &map, sf::RenderWi
 				return;
 			}
 			
-			spHache4.setPosition((float)m_posX, (float)m_posY);//*32 enlevé
+			spHache4.setPosition((float)m_posX, (float)m_posY);//*32 enlevï¿½
 			window.draw(spHache4);
 
 		}
@@ -330,7 +329,7 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto, Map &map, sf::RenderWi
 				return;
 			}
 			
-			spHache1.setPosition((float)m_posX, (float)m_posY);//*32 enlevé
+			spHache1.setPosition((float)m_posX, (float)m_posY);//*32 enlevï¿½
 			window.draw(spHache1);
 		}
 
@@ -612,7 +611,7 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto,Enemie *teki1,Enemie *t
 
 			}
 
-			spHache1.setPosition((float)m_posX, (float)m_posY); //*32 enlevé
+			spHache1.setPosition((float)m_posX, (float)m_posY); //*32 enlevï¿½
 			window.draw(spHache1);
 
 		}
@@ -652,7 +651,7 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto,Enemie *teki1,Enemie *t
 				return;
 
 			}
-			spHache2.setPosition((float)m_posX, (float)m_posY);//*32 enlevé
+			spHache2.setPosition((float)m_posX, (float)m_posY);//*32 enlevï¿½
 			window.draw(spHache2);
 
 		}
@@ -692,7 +691,7 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto,Enemie *teki1,Enemie *t
 				return;
 
 			}
-			spHache3.setPosition((float)m_posX, (float)m_posY);//*32 enlevé
+			spHache3.setPosition((float)m_posX, (float)m_posY);//*32 enlevï¿½
 			window.draw(spHache3);
 
 		}
@@ -731,7 +730,7 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto,Enemie *teki1,Enemie *t
 				return;
 
 			}
-			spHache4.setPosition((float)m_posX, (float)m_posY);//*32 enlevé
+			spHache4.setPosition((float)m_posX, (float)m_posY);//*32 enlevï¿½
 			window.draw(spHache4);
 
 		}
@@ -768,7 +767,7 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto,Enemie *teki1,Enemie *t
 				return;
 
 			}
-			spHache1.setPosition((float)m_posX, (float)m_posY);//*32 enlevé
+			spHache1.setPosition((float)m_posX, (float)m_posY);//*32 enlevï¿½
 			window.draw(spHache1);
 		}
 
@@ -817,7 +816,7 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto,Enemie *teki1,Enemie *t
 
 			}
 
-			spHache1.setPosition((float)m_posX, (float)m_posY); //*32 enlevé
+			spHache1.setPosition((float)m_posX, (float)m_posY); //*32 enlevï¿½
 			window.draw(spHache1);
 
 		}
@@ -859,7 +858,7 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto,Enemie *teki1,Enemie *t
 				return;
 
 			}
-			spHache2.setPosition((float)m_posX, (float)m_posY);//*32 enlevé
+			spHache2.setPosition((float)m_posX, (float)m_posY);//*32 enlevï¿½
 			window.draw(spHache2);
 
 		}
@@ -900,7 +899,7 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto,Enemie *teki1,Enemie *t
 				return;
 
 			}
-			spHache3.setPosition((float)m_posX, (float)m_posY);//*32 enlevé
+			spHache3.setPosition((float)m_posX, (float)m_posY);//*32 enlevï¿½
 			window.draw(spHache3);
 
 		}
@@ -940,7 +939,7 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto,Enemie *teki1,Enemie *t
 				return;
 
 			}
-			spHache4.setPosition((float)m_posX, (float)m_posY);//*32 enlevé
+			spHache4.setPosition((float)m_posX, (float)m_posY);//*32 enlevï¿½
 			window.draw(spHache4);
 
 		}
@@ -979,7 +978,7 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto,Enemie *teki1,Enemie *t
 				return;
 
 			}
-			spHache1.setPosition((float)m_posX, (float)m_posY);//*32 enlevé
+			spHache1.setPosition((float)m_posX, (float)m_posY);//*32 enlevï¿½
 			window.draw(spHache1);
 		}
 
@@ -1417,7 +1416,7 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto, Enemie *teki, Map &map
 
 			}
 
-			spHache1.setPosition((float)m_posX, (float)m_posY); //*32 enlevé
+			spHache1.setPosition((float)m_posX, (float)m_posY); //*32 enlevï¿½
 			window.draw(spHache1);
 
 		}
@@ -1449,7 +1448,7 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto, Enemie *teki, Map &map
 
 			}
 			
-			spHache2.setPosition((float)m_posX, (float)m_posY);//*32 enlevé
+			spHache2.setPosition((float)m_posX, (float)m_posY);//*32 enlevï¿½
 			window.draw(spHache2);
 
 		}
@@ -1480,7 +1479,7 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto, Enemie *teki, Map &map
 
 			}
 		
-			spHache3.setPosition((float)m_posX, (float)m_posY);//*32 enlevé
+			spHache3.setPosition((float)m_posX, (float)m_posY);//*32 enlevï¿½
 			window.draw(spHache3);
 
 		}
@@ -1510,7 +1509,7 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto, Enemie *teki, Map &map
 
 			}
 			
-			spHache4.setPosition((float)m_posX, (float)m_posY);//*32 enlevé
+			spHache4.setPosition((float)m_posX, (float)m_posY);//*32 enlevï¿½
 			window.draw(spHache4);
 
 		}
@@ -1539,7 +1538,7 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto, Enemie *teki, Map &map
 
 			}
 			
-			spHache1.setPosition((float)m_posX, (float)m_posY);//*32 enlevé
+			spHache1.setPosition((float)m_posX, (float)m_posY);//*32 enlevï¿½
 			window.draw(spHache1);
 		}
 
@@ -1577,7 +1576,7 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto, Enemie *teki, Map &map
 				
 			}
 
-			spHache1.setPosition((float)m_posX, (float)m_posY); //*32 enlevé
+			spHache1.setPosition((float)m_posX, (float)m_posY); //*32 enlevï¿½
 			window.draw(spHache1);
 
 		}
@@ -1610,7 +1609,7 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto, Enemie *teki, Map &map
 
 			}
 			
-			spHache2.setPosition((float)m_posX, (float)m_posY);//*32 enlevé
+			spHache2.setPosition((float)m_posX, (float)m_posY);//*32 enlevï¿½
 			window.draw(spHache2);
 
 		}
@@ -1642,7 +1641,7 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto, Enemie *teki, Map &map
 
 			}
 			
-			spHache3.setPosition((float)m_posX, (float)m_posY);//*32 enlevé
+			spHache3.setPosition((float)m_posX, (float)m_posY);//*32 enlevï¿½
 			window.draw(spHache3);
 
 		}
@@ -1673,7 +1672,7 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto, Enemie *teki, Map &map
 
 			}
 			
-			spHache4.setPosition((float)m_posX, (float)m_posY);//*32 enlevé
+			spHache4.setPosition((float)m_posX, (float)m_posY);//*32 enlevï¿½
 			window.draw(spHache4);
 
 		}
@@ -1703,7 +1702,7 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto, Enemie *teki, Map &map
 
 			}
 			
-			spHache1.setPosition((float)m_posX, (float)m_posY);//*32 enlevé
+			spHache1.setPosition((float)m_posX, (float)m_posY);//*32 enlevï¿½
 			window.draw(spHache1);
 		}
 

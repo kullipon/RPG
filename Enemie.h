@@ -3,13 +3,16 @@
 
 #include "PersonnageBase.h"
 #include <SFML/Graphics.hpp>
+//#include "Flamme.h"
+
 class Flamme;
 
 //class PersonnageBase;
 
 extern bool attaquer;
 
-static bool brulerArbreAnimFini;
+
+
 
 class Enemie :	public PersonnageBase
 {
@@ -22,7 +25,8 @@ public:
 virtual ~Enemie();
 
 
-
+sf::Sprite boule_1;
+sf::Sprite boule_2;
 
 
 
@@ -34,6 +38,8 @@ bool get_demandeAttaque();
 bool get_transeUP();
 bool get_animTranseFini();
 bool get_animAttaqueFini();
+bool get_brulerArbreAnimFini();
+Flamme* get_flamme();  //RECUPERE L'ADRESSE DU POINTEUR
 
 
 //MUTATEURS
@@ -44,16 +50,22 @@ void set_attacked(bool attacked);
 void set_animDegatsOn(bool tekiAnim);
 void set_animTranseFini(bool animTranseFini);
 void set_animAttaqueFini(bool animAttaqueFini);
+void set_brulerArbreAnimFini(bool brulerArbreAnimFini);
+void set_autorisationShoot(bool autorisationShoot);
+
 
 
 //METHODES
 
-void attaque(sf::RenderWindow &window,Enemie *teki,Map &map,Flamme *flamme1);
+void attaque(sf::RenderWindow &window,Enemie *teki,Map &map);
 void animTranse(sf::RenderWindow &window,Enemie *teki);
 virtual void affichage(sf::RenderWindow &window, Enemie *teki) const;
 void animDegats(sf::RenderWindow &window, Enemie *teki);
-void deplacementAuto(Enemie *enemie, Map &map);
+void deplacementAuto(Enemie *teki1,Enemie *teki2, Map &map);
+void deplacementAuto(Enemie *teki, Map &map);
 virtual void recevoirDegats(Enemie *perso);
+void killFlamme();
+
 
 
 
@@ -66,12 +78,12 @@ sf::Sprite teki1;
 sf::Sprite teki2;
 sf::Texture textPeppa;
 sf::Sprite peppaSprite;
-sf::Sprite boule_1;
-sf::Sprite boule_2;
+//sf::Sprite boule_1;  EN PUBLIC
+//sf::Sprite boule_2;  EN PUBLIC
 sf::Sprite transeSprite;
 
 
-bool animDegatsON;
+bool m_animDegatsON;
 bool m_attacked;
 bool m_boss;
 bool m_demandeAttaque; 
@@ -80,6 +92,11 @@ bool m_animTranseFini;
 bool m_animAttaqueFini;
 bool m_lastWasShoot;
 float m_vitesseBoule;
+bool m_brulerArbreAnimFini;
+bool m_autorisationShoot;
+sf::Clock tekiClock;
+
+Flamme *m_flamme;
 
 };
 
