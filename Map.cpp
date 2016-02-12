@@ -327,14 +327,14 @@ Map::temps(Enemie *teki1 , Enemie *teki2 , sf::Time &time , sf::Clock &clock , s
      {
 	  if (m_boucle == 0)
 	  {
-	       if (teki1->get_attacked() == false) //SI TEKI 1 NON ATTACKED ET TEKI 2 ATTAQUE PAS
+	       if (teki1->get_attacked() == false) //SI TEKI 1 NON ATTACKED //ET TEKI 2 ATTAQUE PAS
 	       {
 
 
 		    teki1->deplacementAuto(teki1 , teki2, *this) ;
 
 	       }
-	       else  if (teki2->get_attacked() == false)
+	       if (teki2->get_attacked() == false)
 	       {
 		 
 		    teki2->deplacementAuto(teki2 , teki1, *this) ;

@@ -35,7 +35,7 @@ private:
 	int m_verifPosX;
 	int m_verifPosY;
 	int m_autorisationCaseX;
-                  int m_autorisationCaseY;
+    int m_autorisationCaseY;
 	char m_verifCaseMap;
 	char m_direction;
 	
@@ -43,8 +43,9 @@ private:
 	bool m_destructionArbre;
 	int m_posArbreX;
 	int m_posArbreY;
-                  int m_boucleAff;
-                  sf::Clock fClock;
+    int m_boucleAff;
+    sf::Clock fClock;
+	int tempsPasse;
 
 };
 

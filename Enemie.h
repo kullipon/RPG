@@ -95,6 +95,7 @@ float m_vitesseBoule;
 bool m_brulerArbreAnimFini;
 bool m_autorisationShoot;
 sf::Clock tekiClock;
+sf::Time b;
 
 Flamme *m_flamme;
 
