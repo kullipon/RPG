@@ -7,7 +7,7 @@ Guerrier::Guerrier() : Joueur()
 {
 
 	m_vie = 200;
-	hacheUp = false;
+	m_hacheUp = false;
 
 	if (!textWar.loadFromFile("texture_3.png"))
 	{
@@ -48,59 +48,62 @@ Guerrier::~Guerrier()
 bool Guerrier::getHacheUp()
 {
 
-	return hacheUp;
+	return m_hacheUp;
 }
 
-void Guerrier::attaquer(sf::Clock &clock, Map &map, sf::RenderWindow &window, bool &attaquer, bool &hacheUp)
+void Guerrier::attaquer(sf::Clock &hacheClock, Map &map, sf::RenderWindow &window, bool &attaquer)
 {
 
-	if (hacheUp == false)
+	if (m_hacheUp == false)
 	{
-		hache = new Hache(this, window, clock);
-		hacheUp = true;
+		hache = new Hache(this, window,hacheClock);
+		m_hacheUp = true;
+		hacheClock.restart();
 	}
 	
-	hache->deplacement(clock, this, map, window, attaquer, hacheUp);
+	hache->deplacement(this,hacheClock, map, window, attaquer, m_hacheUp);
 
 
 }
 
-void Guerrier::attaquer(Enemie *teki1,Enemie *teki2,sf::Clock &clock,Map &map,sf::RenderWindow &window,bool &attaquer,bool &hacheUp)
+void Guerrier::attaquer(Enemie *teki1,Enemie *teki2,sf::Clock &hacheClock,Map &map,sf::RenderWindow &window,bool &attaquer)
 {
 	bool teki1Anim = teki1->get_animDegatsON();
 	bool teki2Anim = teki2->get_animDegatsON();
 
-	if (hacheUp == false && teki1Anim == false && teki2Anim == false)
-	{
-	hache = new Hache(this,window,clock);
-	hacheUp = true;
-	}
 	if (teki1Anim == true || teki2Anim == true)
 	{
 		return;
 	}
-	hache->deplacement(clock,this,teki1,teki2,map,window,attaquer,hacheUp);
+	if (m_hacheUp == false && teki1Anim == false && teki2Anim == false)
+	{
+	hache = new Hache(this,window,hacheClock);
+	m_hacheUp = true;
+	}
+	
+	hache->deplacement(this,teki1,teki2,hacheClock, map,window,attaquer,m_hacheUp);
 
 }
 
 
-void Guerrier::attaquer(Enemie *teki, sf::Clock &clock, Map &map, sf::RenderWindow &window, bool &attaquer, bool &hacheUp)
+void Guerrier::attaquer(Enemie *teki,sf::Clock &hacheClock, Map &map, sf::RenderWindow &window, bool &attaquer)
 {
 
 	bool teki1Anim = teki->get_animDegatsON();
 	
-
-		if (hacheUp == false && teki1Anim == false)
-		{
-			hache = new Hache(this,window,clock);
-			hacheUp = true;
-		}
 		if (teki1Anim == true)
 		{
 			return;
 		}
 
-			hache->deplacement(clock,this,teki,map,window,attaquer,hacheUp);
+		if (m_hacheUp == false && teki1Anim == false)
+		{
+			hache = new Hache(this,window,hacheClock);
+			m_hacheUp = true;
+		}
+		
+
+			hache->deplacement(this,teki,hacheClock,map,window,attaquer,m_hacheUp);
 
 }
 
@@ -283,7 +286,7 @@ void Guerrier::set_yplus1(Map &map,bool &deplacementOK)
 void Guerrier::supprimerHache()
 {
 
-	hacheUp = false;
+	m_hacheUp = false;
 	delete hache;
 	hache = 0;
 

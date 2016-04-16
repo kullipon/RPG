@@ -296,17 +296,27 @@ void Enemie::deplacementAuto(Enemie *teki1, Enemie *teki2, Map &map)
 
 }
 
+
 void Enemie::deplacementAuto(Enemie *teki, Map &map)
 {
-
-	if (teki->m_animAttaqueFini == false || teki->m_animTranseFini == false) // SI ANIM DE L'ATTAQUE EN COURS ON SORT
+	if (teki->m_animAttaqueFini == false || teki->m_animTranseFini == false || teki->m_brulerArbreAnimFini == false) // SI ANIM DE L'ATTAQUE EN COURS ON SORT
 	{
 		return;
-
 	}
 
-	unsigned int a = rand() % 5;
+	unsigned int a = 0;
 
+	if (teki->m_autorisationShoot == true)
+	{
+		a = rand() % 5;
+	}
+	else
+	{
+		a = rand() % 4;
+	}
+
+
+	// TEKI1
 
 	switch (a)
 	{
@@ -374,39 +384,23 @@ void Enemie::deplacementAuto(Enemie *teki, Map &map)
 	case 4: //ATTAQUER
 	{
 
-		if (teki->m_lastWasShoot == false)
-		{
-
-			teki->m_demandeAttaque = true;
-			teki->m_lastWasShoot = true;
-			teki->m_demandeAttaque = false;
-		}
-		else
-		{
-			std::cout << "LAST SHOOT TRUE -> demandeAttaque passe a FALSE" << std::endl;
-			teki->m_demandeAttaque = false;
-			teki->m_lastWasShoot = false;
-		}
-
-
-
-
-
+		teki->m_demandeAttaque = true;
+		teki->m_lastWasShoot = true;
+		teki->m_autorisationShoot = false;
 
 	}
 	break;
 
 
-
 	} // fin switch
+
+
 
 }
 
 void Enemie::recevoirDegats(Enemie *perso)
 {
-
 	perso->m_vie -= 50;
-
 }
 
 bool Enemie::get_demandeAttaque()
@@ -483,6 +477,7 @@ void Enemie::animDegats(sf::RenderWindow &window, Enemie *teki)
 		{
 			teki->m_vivant = false;
 			teki->m_attacked = false;
+			
 		}
 
 
@@ -514,14 +509,10 @@ void Enemie::attaque(sf::RenderWindow &window, Enemie *teki, Map &map)
 
 		if (teki->m_flamme == 0) // SI FLAMME == 0 , ON LA CREER
 		{
-
 			teki->m_flamme = new Flamme(teki, m_realX, m_realY);
 
-
 			std::cout << "La flamme EST UP" << std::endl;
-
 			teki->m_flamme->verifDeplacement(teki, map);
-
 		}
 		else
 		{
@@ -561,14 +552,11 @@ void Enemie::attaque(sf::RenderWindow &window, Enemie *teki, Map &map)
 
 	if (teki->m_flamme != 0 && teki->m_flamme->get_alive() == false) //SI FLAMME DEAD ON CHECK
 	{
-
 		//ON KILL LA FLAMME
 
 		delete teki->m_flamme;
 		teki->m_flamme = 0;
-
 		std::cout << "La FLAMME EST DOWN" << std::endl;
-
 	}
 
 }
@@ -576,19 +564,14 @@ void Enemie::attaque(sf::RenderWindow &window, Enemie *teki, Map &map)
 
 void Enemie::animTranse(sf::RenderWindow &window, Enemie *teki)
 {
-
-
-
 	if (teki->m_animAttaqueFini == false || teki->m_brulerArbreAnimFini == false) // SI L'ANIM ATTAQUE N'EST PAS FINI  OU ANIM BRULER ARBRE NON FINI: ON SORT
 	{
 		return;
-
 	}
 
 
 	if (teki->m_transeUP == false) // INIT ANIM TRANSE
 	{
-
 		teki->m_transeUP = true;
 		teki->m_animTranseFini = false; //False car l'anim commence
 		b = this->tekiClock.restart();
@@ -600,46 +583,32 @@ void Enemie::animTranse(sf::RenderWindow &window, Enemie *teki)
 
 	if (tempPasse <= 1500) // ANIMATION
 	{
-
 		transeSprite.setPosition((float)m_realX, (float)m_realY);
 		window.draw(transeSprite);
-
-
 	}
 
 
 	else if (b.asMilliseconds() > 1500 && b.asMilliseconds() <= 2000)
 	{
-
 		teki1.setPosition((float)m_realX, (float)m_realY);
 		window.draw(teki1);
-
 	}
 
 	else if (b.asMilliseconds() > 2000 && b.asMilliseconds() <= 2500)
 	{
-
-
 		transeSprite.setPosition((float)m_realX, (float)m_realY);
 		window.draw(transeSprite);
-
-
 	}
 	else if (b.asMilliseconds() > 2500 && b.asMilliseconds() <= 3000)
 	{
-
-
 		teki1.setPosition((float)m_realX, (float)m_realY);
 		window.draw(teki1);
-
-
 	}
 	else if (b.asMilliseconds() > 3000)
 	{
 		teki->m_animTranseFini = true;
 		teki->m_transeUP = false;
 		teki->tekiClock.restart();
-
 	}
 
 

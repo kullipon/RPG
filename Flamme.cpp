@@ -8,7 +8,7 @@ Flamme::Flamme() : m_posFlammeX(0), m_posFlammeY(0), m_autorisationCaseX(0), m_a
 {
 	m_verifPosX = 0;
 	m_verifPosY = 0;
-	tempsPasse = 0;
+	tempsPasse = 0.0f;
 	//m_time = m_clock.getElapsedTime();
 
 
@@ -265,31 +265,28 @@ void Flamme::verifDeplacement(Enemie *teki, Map &map)
 
 void Flamme::affichage(sf::RenderWindow& window, Enemie* teki, Map& map)
 {
-	bool destructionArbre;
-	bool alive;
 
-	destructionArbre = teki->get_flamme()->m_destructionArbre;
-	alive = teki->get_flamme()->m_alive;
-
-	if (destructionArbre == true || alive == false)
+	if (m_destructionArbre == true || m_alive == false)
 	{
 		return;
 	}
 	//m_boucleAff = teki->get_flamme()->m_boucleAff;
+	fTime = fClock.getElapsedTime();
+	tempsPasse = fTime.asSeconds();
 
-
-	if (tempsPasse > 1000)
-	{
-	
+	if (tempsPasse > 2.0f)
+	{	
 		fTime = fClock.restart();
+		fTime = fClock.getElapsedTime();
+		tempsPasse = fTime.asSeconds();
 	}
-
-	fTime = this->fClock.getElapsedTime();
-	tempsPasse = fTime.asMilliseconds();
-	m_deplacement = tempsPasse * 0.032;
-
+		
 	
-		teki->boule_1.setPosition((float)(m_posFlammeX + m_deplacement + m_autorisationCaseX), (float)m_posFlammeY);
+	m_deplacement = tempsPasse * 2.0f;
+
+	float X = (float)m_posFlammeX + (float)m_deplacement + (float)m_autorisationCaseX + 32;
+	
+		teki->boule_1.setPosition(X, (float)m_posFlammeY);
 
 		window.draw(teki->boule_1);
 	

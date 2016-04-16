@@ -18,20 +18,16 @@
 #include "ObAttaquer.h"
 
 
-
-
 bool deplacementOK(false);
-bool attaquer(false);
 
+sf::Clock hacheClock;
 
 int main()
 {
-
-
-
 	srand(time(0));
-
+	bool attaquer(false);
 	sf::RenderWindow window(sf::VideoMode(352, 352), "Zelda Like", sf::Style::Resize);
+	window.setFramerateLimit(60);
 
 	Guerrier *toto = 0;
 	toto = new Guerrier();
@@ -46,21 +42,7 @@ int main()
 
 	Enemie *peppa = 0;
 	bool peppaPopped = false;
-
-
-
-
-
-
-
-	sf::Time time;
-	sf::Clock clock;
-	sf::Clock clockJoueur;
-
-	time = clock.getElapsedTime();
-
 	bool hacheUp = toto->getHacheUp();
-
 
 	//ObAttaquer ObAttaque;
 
@@ -74,11 +56,9 @@ int main()
 
 	}
 
-
-
 	// on fait tourner le programme jusqu'� ce que la fen�tre soit ferm�e
-	while (window.isOpen())
-	{
+while (window.isOpen())
+{
 		// on inspecte tous les �v�nements de la fen�tre qui ont �t� �mis depuis la pr�c�dente it�ration
 		sf::Event event;
 		while (window.pollEvent(event))
@@ -91,12 +71,10 @@ int main()
 			{
 				window.close();
 
-
 			}
 			break;
 
-
-			//�venement "clavier pr�ss�"
+			//évenement "clavier préssé"
 			case sf::Event::KeyPressed:
 			{
 
@@ -133,52 +111,38 @@ int main()
 				}
 				else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
 				{
-
-
 					attaquer = true;
-					clockJoueur.restart();
-
 				}
-
-
+				
 				else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
 				{
-
 					window.close();
-
 				}
 
 				break;
 			}
 			case sf::Event::KeyReleased:
-			{
-				deplacementOK = false;
+				{
+					deplacementOK = false;
 
-			}
-			break;
+				}
+				break;
 
 			default:
 				break;
 			}//fin switch
+			
 
-
-
-			 /* ----------  GESTION DU JOYSTICK --------- */
+ /*-----------------------  GESTION DU JOYSTICK ----------------------------------- */
 
 
 			if (sf::Joystick::isButtonPressed(0, 0))
 			{
-
-				attaquer = true;
-				clockJoueur.restart();
-
+				attaquer = true;				
 			}
-
 
 			float axeX = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
 			float axeY = sf::Joystick::getAxisPosition(0, sf::Joystick::Y);
-
-
 
 			if (axeX == -100)
 			{
@@ -207,32 +171,23 @@ int main()
 				deplacementOK = true;
 				toto->set_yplus1(map, deplacementOK);
 				toto->set_direction('S');
-
-
 			}
 
 			else if (axeX == 0 && axeY == 0)
 			{
 				deplacementOK = false;
-
-
 			}
-
 
 		}//fin Event
 
 
+/* --------------------------  DESSIN  ------------------------------------------ */
 
-
-		//--------------  DESSIN --------------------
-
-
-
-
-		while (attaquer == true)
+/*------------------------- ATTAQUE --------------------- */
+		while (attaquer) 
 		{
 
-			window.clear(sf::Color::Black);
+			window.clear();
 
 			map.affichage(window);
 
@@ -242,45 +197,43 @@ int main()
 
 			if (teki1 == 0 && teki2 != 0) // ENEMIE 1 MORT et ENEMIE2 Encore en vie
 			{
-				map.temps(teki2, time, clock, window);
+				map.temps(teki2, window);
 				teki2->affichage(window, teki2);
 			}
 			else if (teki2 == 0 && teki1 != 0) // ENEMIE 2 MORT et Enemie 1 encore en vie
 			{
-				map.temps(teki1, time, clock, window);
+				map.temps(teki1, window);
 				teki1->affichage(window, teki1);
 			}
 			else if (teki1 != 0 && teki2 != 0) // LES 2 en vie
 			{
-				map.temps(teki1, teki2, time, clock, window);
+				map.temps(teki1, teki2, window);
 				teki1->affichage(window, teki1);
 				teki2->affichage(window, teki2);
 			}
 
+			/*--------------*************-----------------*/	
+			/*--------------*           *-----------------*/
+			/*--------------*  ATTAQUE  *-----------------*/
+			/*--------------*           *-----------------*/
+			/*--------------*************-----------------*/
 
-
-			//ATTAQUE
-
-			hacheUp = toto->getHacheUp();
-
-			if (teki1 == 0 && teki2 != 0) // TEKI 1 MORT et TEKI 2 ALIVE
+			if (teki1 == 0 && teki2 != 0) // TEKI 1 DEAD et TEKI 2 ALIVE
 			{
-				toto->attaquer(teki2, clockJoueur, map, window, attaquer, hacheUp);
+				toto->attaquer(teki2, hacheClock,map, window, attaquer);
 			}
-			else if (teki2 == 0 && teki1 != 0) // TEKI 2 MORT et TEKI 1 Vivant
+			else if (teki2 == 0 && teki1 != 0) // TEKI 2 DEAD et TEKI 1 ALIVE
 			{
-				toto->attaquer(teki1, clockJoueur, map, window, attaquer, hacheUp);
+				toto->attaquer(teki1, hacheClock, map, window, attaquer);
 
 			}
 			else if (teki1 != 0 && teki2 != 0) // LES DEUX ALIVE
 			{
-				toto->attaquer(teki1, teki2, clockJoueur, map, window, attaquer, hacheUp);
-
+				toto->attaquer(teki1, teki2,hacheClock, map, window, attaquer);
 			}
-			else // TOUS MORTS
+			else // ALL DEAD
 			{
-				toto->attaquer(clockJoueur, map, window, attaquer, hacheUp);
-
+				toto->attaquer(hacheClock, map, window, attaquer);
 			}
 
 			if (teki1 != 0)
@@ -292,11 +245,10 @@ int main()
 					//ANIM DEGATS
 					toto->supprimerHache();
 					teki1->animDegats(window, teki1);
-
-
 					//check DEAD
 					if (teki1->get_vivant() == false)
 					{
+						attaquer = false;
 						delete teki1;
 						teki1 = 0;
 					}
@@ -314,58 +266,53 @@ int main()
 					//check DEAD
 					if (teki2->get_vivant() == false)
 					{
+						attaquer = false;
 						delete teki2;
 						teki2 = 0;
-
 					}
 				}
 			}
 
 			if (peppa != 0)
 			{
-
 				peppa->affichage(window, peppa);
-
 			}
 
 			//AFFICHAGE DURANT L'ATTAQUE
-
 			window.display();
 
+			
+		} 
+/*------------------------- FIN ATTAQUE --------------------- */
 
-		} // FIN ATTAQUE
+
+/*------------------------- AFFICHAGE --------------------- */
 
 
-
-		window.clear(sf::Color::Black);
+		window.clear();
 
 		map.affichage(window);
 
 		toto->affichage(window, toto);
 
-
-
-
 		if (teki1 != 0 && teki2 == 0) //TEKI 1 ALIVE et TEKI 2 DEAD 
 		{
+			map.temps(teki1,window);
 			teki1->affichage(window, teki1);
-			map.temps(teki1, time, clock, window);
 		}
 		else if (teki2 != 0 && teki1 == 0)  //TEKI 1 DEAD et TEKI 2 ALIVE 
-		{
+		{			
+			map.temps(teki2, window);
 			teki2->affichage(window, teki2);
-			map.temps(teki2, time, clock, window);
 		}
 		else if (teki1 != 0 && teki2 != 0) // LES 2 EN VIE
-		{
+		{			
+			map.temps(teki1, teki2, window); // Fonction qui  SET demandeAttaque = TRUE 
 			teki1->affichage(window, teki1);
 			teki2->affichage(window, teki2);
-			map.temps(teki1, teki2, time, clock, window); // Fonction qui  SET demandeAttaque = TRUE 
 
 			if (teki1->get_demandeAttaque() == true)
 			{
-
-
 				if (teki2->get_brulerArbreAnimFini() == true && teki2->get_animTranseFini() == true && teki2->get_animAttaqueFini() == true)
 				{
 					teki1->animTranse(window, teki1);
@@ -376,15 +323,12 @@ int main()
 						teki2->set_autorisationShoot(true);
 					}
 				}
-
-
 			}
 
 			if (teki2->get_demandeAttaque() == true)
 			{
 				if (teki1->get_brulerArbreAnimFini() == true && teki1->get_animTranseFini() == true && teki1->get_animAttaqueFini() == true)
 				{
-
 					teki2->animTranse(window, teki2);
 					teki2->attaque(window, teki2, map);
 
@@ -392,17 +336,11 @@ int main()
 					{
 						teki1->set_autorisationShoot(true);
 					}
-
 				}
 			}
-
-
 		}
-
 		else if (teki1 == 0 && teki2 == 0) // SI LES DEUX SONT MORTS
 		{
-
-
 			if (peppa == 0 && peppaPopped == false)
 			{
 				//POP PEPPA (boss de fin)
@@ -411,18 +349,11 @@ int main()
 			}
 
 			peppa->affichage(window, peppa);
-
-
-
 		}
-
 		window.display();
+}
 
-
-	} // FIN BOUCLE
-
-
-
+/* ----------------------- FIN DE BOUCLE DE JEU ----------------------------- */
 
 
 	if (teki1 != 0)

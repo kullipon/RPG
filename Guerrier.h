@@ -17,9 +17,9 @@ public:
 	Guerrier(Guerrier const& guerrier);
 	virtual ~Guerrier();
 
-void attaquer(sf::Clock &clock, Map &map, sf::RenderWindow &window, bool &attaquer, bool &hacheUp);
-void attaquer(Enemie *teki1,Enemie *teki2,sf::Clock &clock,Map &map,sf::RenderWindow &window,bool &attaquer,bool &hacheUp);
-void attaquer(Enemie *teki, sf::Clock &clock, Map &map, sf::RenderWindow &window, bool &attaquer, bool &hacheUp);
+void attaquer(sf::Clock &hacheClock, Map &map, sf::RenderWindow &window, bool &attaquer);
+void attaquer(Enemie *teki1,Enemie *teki2,sf::Clock &hacheClock,Map &map,sf::RenderWindow &window,bool &attaquer);
+void attaquer(Enemie *teki, sf::Clock &hacheClock, Map &map, sf::RenderWindow &window, bool &attaquer);
 void supprimerHache();
 bool getHacheUp();
 
@@ -50,7 +50,7 @@ virtual void recevoirDegats(PersonnageBase *perso);
 
 
 Hache *hache;
-bool hacheUp;
+bool m_hacheUp;
 
 
 

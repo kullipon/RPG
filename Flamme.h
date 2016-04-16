@@ -45,7 +45,7 @@ private:
 	int m_posArbreY;
     int m_boucleAff;
     sf::Clock fClock;
-	int tempsPasse;
+	float tempsPasse;
 
 };
 

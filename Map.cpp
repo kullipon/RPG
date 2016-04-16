@@ -3,13 +3,15 @@
 
 
 using namespace std ;
+sf::Time mapTime;
+sf::Clock mapClock;
 
 Map::Map() : m_X(11) , m_Y(11) , m_boucle(0) {
 }
 
 Map::Map(Joueur *joueur1) : m_X(11) , m_Y(11) , m_boucle(0) {
 
-     //cr�ation de la matrix
+     //création de la matrix
      level1 = NULL ;
      level1 = new char* [m_X] ;
 
@@ -22,12 +24,12 @@ Map::Map(Joueur *joueur1) : m_X(11) , m_Y(11) , m_boucle(0) {
 
      for (int i = 0 ; i < m_X ; i++)
      {
-	  for (int j = 0 ; j < m_Y ; j++)
-	  {
+		  for (int j = 0 ; j < m_Y ; j++)
+		  {
 
-	       level1[i][j] = '0' ;
+			   level1[i][j] = '0' ;
 
-	  }
+		  }
 
      }
 
@@ -264,14 +266,12 @@ bool Map::okForMove(PersonnageBase *perso , char direction , int variation) {
 
 }
 
-char
-Map::getLevel1Pos(int x , int y) {
+char Map::getLevel1Pos(int x , int y) {
      return level1[x][y] ;
 
 }
 
-bool
-Map::setEnemiePos(int x , int y) {
+bool Map::setEnemiePos(int x , int y) {
 
      if (level1[x][y] == '0')
      {
@@ -284,8 +284,7 @@ Map::setEnemiePos(int x , int y) {
      return false ;
 }
 
-bool
-Map::setPostoZero(int x , int y) {
+bool Map::setPostoZero(int x , int y) {
 
      if (level1[x][y] == 'E')
      {
@@ -299,8 +298,7 @@ Map::setPostoZero(int x , int y) {
 
 }
 
-bool
-Map::setPosArbreVersSable(int x , int y) {
+bool Map::setPosArbreVersSable(int x , int y) {
      if (level1[x][y] == 'A')
      {
 
@@ -317,133 +315,139 @@ Map::setPosArbreVersSable(int x , int y) {
 
 }
 
-void
-Map::temps(Enemie *teki1 , Enemie *teki2 , sf::Time &time , sf::Clock &clock , sf::RenderWindow &window) {
+void Map::temps(Enemie *teki1 , Enemie *teki2 , sf::RenderWindow &window) {
 
-     time = clock.getElapsedTime() ;
+	mapTime = mapClock.getElapsedTime();
 
+	 if (mapTime.asMilliseconds() > 1500)
+	 {
 
-     if (time.asMilliseconds() <= 500)
+		 mapClock.restart();
+		 m_boucle = 0;
+		 mapTime = mapClock.getElapsedTime();
+	 }
+
+     if (mapTime.asMilliseconds() <= 500)
      {
-	  if (m_boucle == 0)
-	  {
-	       if (teki1->get_attacked() == false) //SI TEKI 1 NON ATTACKED //ET TEKI 2 ATTAQUE PAS
-	       {
+		  if (m_boucle == 0)
+		  {
+			   if (teki1->get_attacked() == false) //SI TEKI 1 NON ATTACKED //ET TEKI 2 ATTAQUE PAS
+			   {
 
 
-		    teki1->deplacementAuto(teki1 , teki2, *this) ;
+				teki1->deplacementAuto(teki1 , teki2, *this) ;
 
-	       }
-	       if (teki2->get_attacked() == false)
-	       {
+			   }
+			   if (teki2->get_attacked() == false)
+			   {
 		 
-		    teki2->deplacementAuto(teki2 , teki1, *this) ;
-	       }
+				teki2->deplacementAuto(teki2 , teki1, *this) ;
+			   }
 
-	       m_boucle++ ;
-	  }
+			   m_boucle++ ;
+		  }
 
      }
-     else if (time.asMilliseconds() > 500 && time.asMilliseconds() <= 1000)
+     else if (mapTime.asMilliseconds() > 500 && mapTime.asMilliseconds() <= 1000)
      {
-	  if (m_boucle == 1)
-	  {
-	       if (teki1->get_attacked() == false)
-	       {
-		    teki1->deplacementAuto(teki1 ,teki2, *this) ;
+		  if (m_boucle == 1)
+		  {
+			   if (teki1->get_attacked() == false)
+			   {
+				teki1->deplacementAuto(teki1 ,teki2, *this) ;
 
-	       }
-	       if (teki2->get_attacked() == false)
-	       {
-		    teki2->deplacementAuto(teki2 ,teki1, *this) ;
-	       }
+			   }
+			   if (teki2->get_attacked() == false)
+			   {
+				teki2->deplacementAuto(teki2 ,teki1, *this) ;
+			   }
 
-	       m_boucle++ ;
-	  }
+			   m_boucle++ ;
+		  }
      }
-     else if (time.asMilliseconds() > 1000 && time.asMilliseconds() <= 1500)
+     else if (mapTime.asMilliseconds() > 1000 && mapTime.asMilliseconds() <= 1500)
      {
-	  if (m_boucle == 2)
-	  {
-	       if (teki1->get_attacked() == false)
-	       {
-		    teki1->deplacementAuto(teki1 , teki2, *this) ;
+		  if (m_boucle == 2)
+		  {
+			   if (teki1->get_attacked() == false)
+			   {
+				teki1->deplacementAuto(teki1 , teki2, *this) ;
 
-	       }
-	       if (teki2->get_attacked() == false)
-	       {
-		    teki2->deplacementAuto(teki2 ,teki1 , *this) ;
-	       }
+			   }
+			   if (teki2->get_attacked() == false)
+			   {
+				teki2->deplacementAuto(teki2 ,teki1 , *this) ;
+			   }
 
-	       m_boucle++ ;
-	  }
+			   m_boucle++ ;
+		  }
      }
-     else if (time.asMilliseconds() > 1500)
+     else if (mapTime.asMilliseconds() > 1500)
      {
 
-	  time = clock.restart() ;
+		 mapTime = mapClock.restart() ;
 	  m_boucle = 0 ;
 
 
      }
 }
 
-void
-Map::temps(Enemie *teki , sf::Time &time , sf::Clock &clock , sf::RenderWindow &window) {
+void Map::temps(Enemie *teki , sf::RenderWindow &window) {
 
-     time = clock.getElapsedTime() ;
+	mapTime = mapClock.getElapsedTime();
+
+	if (mapTime.asMilliseconds() > 1500)
+	{
+
+		mapClock.restart();
+		m_boucle = 0;
+		mapTime = mapClock.getElapsedTime();
+	}
+
+	if (mapTime.asMilliseconds() <= 500)
+	{
+		if (m_boucle == 0)
+		{
+			if (teki->get_attacked() == false) //SI TEKI 1 NON ATTACKED //ET TEKI 2 ATTAQUE PAS
+			{
+				teki->deplacementAuto(teki, *this);
+			}
+			m_boucle++;
+		}
+
+	}
+	else if (mapTime.asMilliseconds() > 500 && mapTime.asMilliseconds() <= 1000)
+	{
+		if (m_boucle == 1)
+		{
+			if (teki->get_attacked() == false)
+			{
+				teki->deplacementAuto(teki, *this);
+
+			}
+			m_boucle++;
+		}
+	}
+	else if (mapTime.asMilliseconds() > 1000 && mapTime.asMilliseconds() <= 1500)
+	{
+		if (m_boucle == 2)
+		{
+			if (teki->get_attacked() == false)
+			{
+				teki->deplacementAuto(teki, *this);
+
+			}
+
+			m_boucle++;
+		}
+	}
+	else if (mapTime.asMilliseconds() > 1500)
+	{
+
+		mapTime = mapClock.restart();
+		m_boucle = 0;
 
 
-     if (time.asMilliseconds() <= 500)
-     {
-	  if (m_boucle == 0)
-	  {
-	       if (teki->get_attacked() == false)
-	       {
-		    teki->deplacementAuto(teki , *this) ;
-
-	       }
-
-
-	       m_boucle++ ;
-	  }
-
-     }
-     else if (time.asMilliseconds() >= 500 && time.asMilliseconds() < 1000)
-     {
-	  if (m_boucle == 1)
-	  {
-	       if (teki->get_attacked() == false)
-	       {
-		    teki->deplacementAuto(teki , *this) ;
-
-	       }
-
-
-	       m_boucle++ ;
-	  }
-     }
-     else if (time.asMilliseconds() >= 1000 && time.asMilliseconds() < 1500)
-     {
-	  if (m_boucle == 2)
-	  {
-	       if (teki->get_attacked() == false)
-	       {
-		    teki->deplacementAuto(teki , *this) ;
-
-	       }
-
-
-	       m_boucle++ ;
-	  }
-     }
-     else if (time.asMilliseconds() > 1500)
-     {
-	  std::cout << time.asMilliseconds() << endl ;
-	  time = clock.restart() ;
-	  m_boucle = 0 ;
-
-
-     }
+	}
 
 }

@@ -1,7 +1,9 @@
 #include "Hache.h"
 #include "Guerrier.h"
 #include "Map.h"
+#include <cmath>
 
+int test = 0;
 
 Hache::Hache()
 {
@@ -10,6 +12,9 @@ m_posY=0;
 m_direction='N';
 m_vitesse=50;
 alive = true;
+m_angle = 0;
+m_lastPosX = 0;
+m_lastPosY = 0;
 }
 
 
@@ -17,20 +22,15 @@ Hache::~Hache()
 {
 }
 
-Hache::Hache(Guerrier *guerrier,sf::RenderWindow &window,sf::Clock &clock) : m_vitesse(50) , alive(true), boucleH(0) , m_posX (0),m_posY(0),m_direction('N')
-{
-
+Hache::Hache(Guerrier *guerrier,sf::RenderWindow &window,sf::Clock &hacheClock) : m_vitesse(50) , alive(true), boucleH(0) , m_posX (0),m_posY(0),m_direction('N'),m_angle(0)
+{	
 	
-
 	if (!textHache.loadFromFile("texture_3.png"))
 	{
 		std::cout << "Erreur de chargement de la texture de la hache." << std::endl;
-
-
 	}
 	else
-	{
-		
+	{		
 		//Sprites de la Hache
 		spHache1.setTexture(textHache);
 		spHache1.setTextureRect(sf::IntRect(256,0,31,32));
@@ -40,6 +40,8 @@ Hache::Hache(Guerrier *guerrier,sf::RenderWindow &window,sf::Clock &clock) : m_v
 		spHache3.setTextureRect(sf::IntRect(320,0,32,32));
 		spHache4.setTexture(textHache);
 		spHache4.setTextureRect(sf::IntRect(352,0,32,32));
+
+		
 	}
 
 	char a = guerrier->getDirection();
@@ -54,16 +56,17 @@ Hache::Hache(Guerrier *guerrier,sf::RenderWindow &window,sf::Clock &clock) : m_v
 			//m_posY = (int)(m_posY/32);
 			m_posY -= 32;
 			m_direction = 'N';
+			m_lastPosY = m_posY;
 			
 			}
-			break;
-			
+			break;		
 
 		case 'S':
 			{
 			m_posX = (int)guerrier->get_m_realX();
 			m_posY = (int)(guerrier->get_m_realY()+32);
 			m_direction = 'S';
+			m_lastPosY = m_posY;
 			}
 
 			break;
@@ -73,6 +76,7 @@ Hache::Hache(Guerrier *guerrier,sf::RenderWindow &window,sf::Clock &clock) : m_v
 			m_posX = (int)(guerrier->get_m_realX()-32);
 			m_posY = (int)guerrier->get_m_realY();
 			m_direction = 'O';
+			m_lastPosX = m_posX;
 			}
 			break;
 
@@ -81,17 +85,10 @@ Hache::Hache(Guerrier *guerrier,sf::RenderWindow &window,sf::Clock &clock) : m_v
 			m_posX = (int)(guerrier->get_m_realX()+32);
 			m_posY =(int) guerrier->get_m_realY();
 			m_direction = 'E';
+			m_lastPosX = m_posX;
 			}
 			break;
-
-	}	
-
-	//spHache1.setPosition((float)m_posX,(float)m_posY);
-	//window.draw(spHache1);
-
-	
-
-
+	}
 }
 
 bool Hache::contact(Enemie *teki)
@@ -100,11 +97,10 @@ bool Hache::contact(Enemie *teki)
 	int tekiY = teki->get_m_realY();
 
 	sf::IntRect maskTeki(tekiX,tekiY, 32, 32);
-	sf::IntRect maskHache(m_posX, m_posY, 32, 32);
+	sf::IntRect maskHache(m_posX, m_posY, 32, 32);//+16 = axe de rotation au centre soit 16px
 
 	if (maskHache.intersects(maskTeki))
 	{
-
 		return true;
 	}
 	else
@@ -112,16 +108,30 @@ bool Hache::contact(Enemie *teki)
 		return false;
 	}
 }
- // ICI ANIM SANS ENEMIES
-void Hache::deplacement(sf::Clock &clock, Guerrier *toto, Map &map, sf::RenderWindow &window, bool &attaquer, bool &hacheUp)
+// ***************   ICI ANIM SANS ENEMIES *******************
+void Hache::deplacement(Guerrier *toto, sf::Clock &hacheClock, Map &map, sf::RenderWindow &window, bool &attaquer, bool &hacheUp)
 {
-	
+	hacheTime = hacheClock.getElapsedTime();
+	std::cout << hacheTime.asSeconds() << std::endl;
 
-	sf::Time a = clock.getElapsedTime();
-
-
-	if (m_posY < 0 || m_posX < 0)
+	if (m_posY < 0 || m_posX < 0 || m_posX > 320 || m_posY > 320)
 	{
+		attaquer = false;
+		toto->supprimerHache();
+		return;
+	}
+
+	if (boucleH == 0)
+	{
+		boucleH = 1;
+		hacheClock.restart();
+		hacheTime = hacheClock.getElapsedTime();
+	}
+
+
+	if (hacheTime.asSeconds() > 5.0f)
+	{
+		boucleH = 0;
 		attaquer = false;
 		toto->supprimerHache();
 		return;
@@ -129,109 +139,216 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto, Map &map, sf::RenderWi
 
 	switch (m_direction)
 	{
-
-
 	case 'N':
 	{
+		m_posY -= (int)(hacheTime.asSeconds() + 1) * 5;
 
-
-		if (a.asMilliseconds() >= 0 && a.asMilliseconds() <= 500)
+		//on verifie a chaque espace de 32 si un enemie est présent
+		if (m_posY + m_lastPosY >= 32)
 		{
-			if (boucleH == 0)
-			{
-				boucleH++;
-			}
-			
-
-			spHache1.setPosition((float)m_posX, (float)m_posY); //*32 enlev�
-			window.draw(spHache1);
-
+			m_lastPosY = m_posY;
 		}
-		else if (a.asMilliseconds() >= 500 && a.asMilliseconds() <= 1000)
+		m_angle = hacheTime.asSeconds() * 180;
+
+		int angle = 0;
+		if (m_angle > 360.0f)
 		{
-
-			if (boucleH == 1)
-			{
-				boucleH++;
-
-			}
-			m_posY -= 32;
-
-
-			if (m_posY < 0)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-			
-			spHache2.setPosition((float)m_posX, (float)m_posY);//*32 enlev�
-			window.draw(spHache2);
-
+			angle = (int)std::round(m_angle);
+			angle %= 360;
+			m_angle = (float)angle;
 		}
-		else if (a.asMilliseconds() >= 1000 && a.asMilliseconds() <= 1500)
+		spHache1.setOrigin(16.0f, 16.0f);
+		spHache1.setRotation(m_angle);
+		spHache1.setPosition(m_posX + 16.0f, (float)m_posY);
+
+		window.draw(spHache1);
+
+		/*
+		if (hacheTime.asMilliseconds() >= 0 && hacheTime.asMilliseconds() <= 1000)
 		{
-
-			if (boucleH == 2)
-			{
-				boucleH++;
-
-			}
-			m_posY -= 64;
-
-			if (m_posY < 0)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-			spHache3.setPosition((float)m_posX, (float)m_posY);//*32 enlev�
-			window.draw(spHache3);
-
+		if (boucleH == 0)
+		{
+		boucleH++;
 		}
-		else if (a.asMilliseconds() >= 1500 && a.asMilliseconds() <= 2000)
+		if (contact(teki1))
 		{
-
-			if (boucleH == 3)
-			{
-				boucleH++;
-			}
-			m_posY -= 96;
-
-			if (m_posY < 0)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-			spHache4.setPosition((float)m_posX, (float)m_posY);//*32 enlev�
-			window.draw(spHache4);
-
+		teki1->set_attacked(true);
+		hacheUp = false;
+		teki1->set_animDegatsOn(true);
+		return;
 		}
-		else if (a.asMilliseconds() >= 2000 && a.asMilliseconds() <= 2500)
+		else if (contact(teki2))
 		{
-			if (boucleH == 4)
-			{
-				boucleH++;
-			}
-			m_posY -= 128;
-			if (m_posY < 0)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-			
-			spHache1.setPosition((float)m_posX, (float)m_posY);//*32 enlev�
-			window.draw(spHache1);
+		teki2->set_attacked(true);
+		hacheUp = false;
+		//ANIM DEGATS
+		teki2->set_animDegatsOn(true);
+		return;
 		}
 
-		else if (a.asMilliseconds() >= 2500)
-		{
-			attaquer = false;
-			toto->supprimerHache();
+		spHache1.setPosition((float)m_posX, (float)m_posY); //*32 enlevé
+		window.draw(spHache1);
 
 		}
+		else if (hacheTime.asMilliseconds() >= 1000 && hacheTime.asMilliseconds() <= 2000)
+		{
+
+		if (boucleH == 1)
+		{
+		boucleH++;
+
+		}
+		m_posY -= 32;
+
+
+		if (m_posY < 0)
+		{
+		attaquer = false;
+		toto->supprimerHache();
+		return;
+		}
+		if (contact(teki1))
+		{
+
+		toto->supprimerHache();
+		//ANIM DEGATS
+		teki1->animDegats(window, teki1);
+		return;
+
+		}
+		if (contact(teki2))
+		{
+
+		toto->supprimerHache();
+
+		//ANIM DEGATS
+		teki2->animDegats(window, teki2);
+		return;
+
+		}
+		spHache2.setPosition((float)m_posX, (float)m_posY);//*32 enlev�
+		window.draw(spHache2);
+
+		}
+		else if (hacheTime.asMilliseconds() >= 2000 && hacheTime.asMilliseconds() <= 3000)
+		{
+
+		if (boucleH == 2)
+		{
+		boucleH++;
+
+		}
+		m_posY -= 64;
+
+		if (m_posY < 0)
+		{
+		attaquer = false;
+		toto->supprimerHache();
+		return;
+		}
+		if (contact(teki1))
+		{
+		toto->supprimerHache();
+
+		//ANIM DEGATS
+		teki1->animDegats(window, teki1);
+		return;
+		}
+		if (contact(teki2))
+		{
+		toto->supprimerHache();
+
+		//ANIM DEGATS
+		teki2->animDegats(window, teki2);
+		return;
+		}
+		spHache3.setPosition((float)m_posX, (float)m_posY);//*32 enlev�
+		window.draw(spHache3);
+
+		}
+		else if (hacheTime.asMilliseconds() >= 3000 && hacheTime.asMilliseconds() <= 4000)
+		{
+
+		if (boucleH == 3)
+		{
+		boucleH++;
+		}
+		m_posY -= 96;
+
+		if (m_posY < 0)
+		{
+		attaquer = false;
+		toto->supprimerHache();
+		return;
+		}
+		if (contact(teki1))
+		{
+		toto->supprimerHache();
+
+		//ANIM DEGATS
+		teki1->animDegats(window, teki1);
+		return;
+
+		}
+		else if (contact(teki2))
+		{
+
+		toto->supprimerHache();
+
+		//ANIM DEGATS
+		teki2->animDegats(window, teki2);
+		return;
+
+		}
+		spHache4.setPosition((float)m_posX, (float)m_posY);//*32 enlev�
+		window.draw(spHache4);
+
+		}
+		else if (hacheTime.asMilliseconds() >= 4000 && hacheTime.asMilliseconds() <= 5000)
+		{
+		if (boucleH == 4)
+		{
+		boucleH++;
+		}
+		m_posY -= 128;
+		if (m_posY < 0 )
+		{
+		attaquer = false;
+		toto->supprimerHache();
+		return;
+		}
+		if (contact(teki1))
+		{
+
+		toto->supprimerHache();
+
+		//ANIM DEGATS
+		teki1->animDegats(window, teki1);
+		return;
+
+		}
+		else if (contact(teki2))
+		{
+
+		toto->supprimerHache();
+
+		//ANIM DEGATS
+		teki2->animDegats(window, teki2);
+		return;
+
+		}
+		spHache1.setPosition((float)m_posX, (float)m_posY);//*32 enlev�
+		window.draw(spHache1);
+		}
+
+		else if (hacheTime.asMilliseconds() >= 5000)
+		{
+		attaquer = false;
+		toto->supprimerHache();
+
+		}
+
+		*/
 
 	} // FIN CASE 'N'
 
@@ -239,106 +356,28 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto, Map &map, sf::RenderWi
 
 	case 'E':
 	{
+		m_posX += (int)(hacheTime.asSeconds() + 1) * 5;
 
-		if (a.asMilliseconds() >= 0 && a.asMilliseconds() <= 500)
+		//on verifie a chaque espace de 32 si un enemie est présent
+		if (m_lastPosX + m_posX >= 32)
 		{
-			if (boucleH == 0)
-			{
-				boucleH++;
-			}
-			
-			spHache1.setPosition((float)m_posX, (float)m_posY); //*32 enlev�
-			window.draw(spHache1);
-
+			m_lastPosX = m_posX;			
 		}
-		else if (a.asMilliseconds() >= 500 && a.asMilliseconds() <= 1000)
+		m_angle = hacheTime.asSeconds() * 180;
+
+		int angle = 0;
+		if (m_angle > 360.0f)
 		{
-
-			if (boucleH == 1)
-			{
-				boucleH++;
-
-			}
-
-			m_posX += 32;
-
-			if (m_posX > 320)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-			
-			spHache2.setPosition((float)m_posX, (float)m_posY);//*32 enlev�
-			window.draw(spHache2);
-
+			angle = (int)std::round(m_angle);
+			angle %= 360;
+			m_angle = (float)angle;
 		}
-		else if (a.asMilliseconds() >= 1000 && a.asMilliseconds() <= 1500)
-		{
+		spHache1.setOrigin(16.0f, 16.0f);
+		spHache1.setRotation(m_angle);
+		spHache1.setPosition((float)m_posX, (float)m_posY + 16.0f);
 
-			if (boucleH == 2)
-			{
-				boucleH++;
+		window.draw(spHache1);
 
-			}
-			m_posX += 64;
-
-			if (m_posX > 320)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-			
-			spHache3.setPosition((float)m_posX, (float)m_posY);//*32 enlev�
-			window.draw(spHache3);
-
-		}
-		else if (a.asMilliseconds() >= 1500 && a.asMilliseconds() <= 2000)
-		{
-
-			if (boucleH == 3)
-			{
-				boucleH++;
-			}
-			m_posX += 96;
-
-			if (m_posX > 320)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-			
-			spHache4.setPosition((float)m_posX, (float)m_posY);//*32 enlev�
-			window.draw(spHache4);
-
-		}
-		else if (a.asMilliseconds() >= 2000 && a.asMilliseconds() <= 2500)
-		{
-			if (boucleH == 4)
-			{
-				boucleH++;
-			}
-			m_posX += 128;
-
-			if (m_posX > 320)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-			
-			spHache1.setPosition((float)m_posX, (float)m_posY);//*32 enlev�
-			window.draw(spHache1);
-		}
-
-		else if (a.asMilliseconds() >= 2500)
-		{
-			attaquer = false;
-			toto->supprimerHache();
-
-		}
 
 	} // FIN CASE 'E'
 
@@ -346,241 +385,133 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto, Map &map, sf::RenderWi
 
 	case 'O':
 	{
-		if (a.asMilliseconds() >= 0 && a.asMilliseconds() <= 500)
+		m_posX -= (int)(hacheTime.asSeconds() + 1) * 5;
+
+		//on verifie a chaque espace de 32 si un enemie est présent
+		if (m_posX + m_lastPosX >= 32)
 		{
-			if (boucleH == 0)
-			{
-				boucleH++;
-			}
-
-			spHache1.setPosition((float)m_posX, (float)m_posY);
-			window.draw(spHache1);
-
+			m_lastPosX = m_posX;
 		}
-		else if (a.asMilliseconds() >= 500 && a.asMilliseconds() <= 1000)
+		m_angle = hacheTime.asSeconds() * 180;
+
+		int angle = 0;
+		if (m_angle > 360.0f)
 		{
-
-			if (boucleH == 1)
-			{
-				boucleH++;
-			}
-
-			m_posX -= 32;
-
-			if (m_posX < 0)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-			
-
-			spHache2.setPosition((float)m_posX, (float)m_posY);
-			window.draw(spHache2);
-
+			angle = (int)std::round(m_angle);
+			angle %= 360;
+			m_angle = (float)angle;
 		}
-		else if (a.asMilliseconds() >= 1000 && a.asMilliseconds() <= 1500)
-		{
+		spHache1.setOrigin(16.0f, 16.0f);
+		spHache1.setRotation(m_angle);
+		spHache1.setPosition((float)m_posX, (float)m_posY + 16.0f);
 
-			if (boucleH == 2)
-			{
-				boucleH++;
-			}
-			m_posX -= 64;
-
-			if (m_posX < 0)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-		
-			spHache3.setPosition((float)m_posX, (float)m_posY);
-			window.draw(spHache3);
-
-		}
-		else if (a.asMilliseconds() >= 1500 && a.asMilliseconds() <= 2000)
-		{
-
-			if (boucleH == 3)
-			{
-				boucleH++;
-			}
-			m_posX -= 96;
-
-			if (m_posX < 0)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-		
-			spHache4.setPosition((float)m_posX, (float)m_posY);
-			window.draw(spHache4);
-
-		}
-		else if (a.asMilliseconds() >= 2000 && a.asMilliseconds() <= 2500)
-		{
-			if (boucleH == 4)
-			{
-				boucleH++;
-			}
-			m_posX -= 128;
-
-			if (m_posX < 0)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-			
-			spHache1.setPosition((float)m_posX, (float)m_posY);
-			window.draw(spHache1);
-		}
-
-		else if (a.asMilliseconds() >= 2500)
-		{
-			attaquer = false;
-			toto->supprimerHache();
-
-		}
-
-	} // FIN CASE 'W'
+		window.draw(spHache1);
+	}
 	break;
 
 	case 'S':
 	{
-		if (a.asMilliseconds() >= 0 && a.asMilliseconds() <= 500)
+		m_posY += (int)(hacheTime.asSeconds() + 1) * 5;
+
+		//on verifie a chaque espace de 32 si un enemie est présent
+		if (m_lastPosY + m_posY >= 32)
 		{
-			if (boucleH == 0)
-			{
-				boucleH++;
-			}
-
-			spHache1.setPosition((float)m_posX, (float)m_posY);
-			window.draw(spHache1);
-
+			m_lastPosY = m_posY;
 		}
-		else if (a.asMilliseconds() >= 500 && a.asMilliseconds() <= 1000)
+		m_angle = hacheTime.asSeconds() * 180;
+
+		int angle = 0;
+		if (m_angle > 360.0f)
 		{
-
-			if (boucleH == 1)
-			{
-				boucleH++;
-			}
-
-			m_posY += 32;
-
-			if (m_posY > 320)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-			
-			spHache2.setPosition((float)m_posX, (float)m_posY);
-			window.draw(spHache2);
-
+			angle = (int)std::round(m_angle);
+			angle %= 360;
+			m_angle = (float)angle;
 		}
-		else if (a.asMilliseconds() >= 1000 && a.asMilliseconds() <= 1500)
-		{
+		spHache1.setOrigin(16.0f, 16.0f);
+		spHache1.setRotation(m_angle);
+		spHache1.setPosition(m_posX + 16.0f, (float)m_posY);
 
-			if (boucleH == 2)
-			{
-				boucleH++;
-			}
-			m_posY += 64;
+		window.draw(spHache1);
 
-			if (m_posY > 320)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-			
-			spHache3.setPosition((float)m_posX, (float)m_posY);
-			window.draw(spHache3);
-
-		}
-		else if (a.asMilliseconds() >= 1500 && a.asMilliseconds() <= 2000)
-		{
-
-			if (boucleH == 3)
-			{
-				boucleH++;
-			}
-			m_posY += 96;
-
-			if (m_posY > 320)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-			
-			spHache4.setPosition((float)m_posX, (float)m_posY);
-			window.draw(spHache4);
-
-		}
-		else if (a.asMilliseconds() >= 2000 && a.asMilliseconds() <= 2500)
-		{
-			if (boucleH == 4)
-			{
-				boucleH++;
-			}
-
-			m_posY += 128;
-
-			if (m_posY > 320)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-			
-			spHache1.setPosition((float)m_posX, (float)m_posY);
-			window.draw(spHache1);
-		}
-
-		else if (a.asMilliseconds() >= 2500)
-		{
-			attaquer = false;
-			toto->supprimerHache();
-
-		}
 
 	} // FIN CASE 'S'
 	break;
 
 	} // FIN SWITCH
-
+	
 }
 
 // ****************    ANIM AVEC 2 ENEMIES *******************
-
-
-void Hache::deplacement(sf::Clock &clock, Guerrier *toto,Enemie *teki1,Enemie *teki2, Map &map, sf::RenderWindow &window, bool &attaquer, bool &hacheUp)
+void Hache::deplacement(Guerrier *toto,Enemie *teki1,Enemie *teki2,sf::Clock &hacheClock, Map &map, sf::RenderWindow &window, bool &attaquer, bool &hacheUp)
 {
-	
-	sf::Time a = clock.getElapsedTime();
+	hacheTime = hacheClock.getElapsedTime();
+	std::cout << hacheTime.asSeconds() << std::endl;
 
-
-	if (m_posY < 0 || m_posX < 0)
+	if (m_posY < 0 || m_posX < 0 || m_posX > 320 || m_posY > 320)
 	{
 		attaquer = false;
 		toto->supprimerHache();
 		return;
 	}
 
+	if (boucleH == 0)
+	{
+		boucleH = 1;
+		hacheClock.restart();
+		hacheTime = hacheClock.getElapsedTime();
+	}
+	
+	
+	if (hacheTime.asSeconds() > 5.0f)
+	{
+		boucleH = 0;
+		attaquer = false;
+		toto->supprimerHache();		
+		return;
+	}		
+
 	switch (m_direction)
 	{
-
-
 	case 'N':
 	{
+		m_posY -= (int)(hacheTime.asSeconds()+1) * 5;
 
+		//on verifie a chaque espace de 32 si un enemie est présent
+		if (m_posY + m_lastPosY >= 32 )
+		{
+			m_lastPosY = m_posY;
 
-		if (a.asMilliseconds() >= 0 && a.asMilliseconds() <= 500)
+			if (contact(teki1))
+			{			
+				//ANIM DEGATS
+				teki1->set_animDegatsOn(true);
+				return;
+			}
+			else if (contact(teki2))
+			{				
+				//ANIM DEGATS
+				teki2->set_animDegatsOn(true);
+				return;
+			}
+
+		}
+		m_angle = hacheTime.asSeconds() * 180;
+
+		int angle = 0;
+		if (m_angle > 360.0f)
+		{
+			angle = (int)std::round(m_angle);
+			angle %= 360;
+			m_angle = (float)angle;
+		}
+		spHache1.setOrigin(16.0f, 16.0f);
+		spHache1.setRotation(m_angle);
+		spHache1.setPosition(m_posX+16.0f, (float)m_posY);
+		
+		window.draw(spHache1);
+
+		/*
+		if (hacheTime.asMilliseconds() >= 0 && hacheTime.asMilliseconds() <= 1000)
 		{
 			if (boucleH == 0)
 			{
@@ -588,43 +519,34 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto,Enemie *teki1,Enemie *t
 			}
 				if (contact(teki1))
 				{
-					
 					teki1->set_attacked(true);
 					hacheUp = false;
 					teki1->set_animDegatsOn(true);
-
-					
 					return;
-
 				}
 				else if (contact(teki2))
 				{
-					
 					teki2->set_attacked(true);
 					hacheUp = false;
 					//ANIM DEGATS
 					teki2->set_animDegatsOn(true);
 					return;
+				}
 
-				
-
-
-			}
-
-			spHache1.setPosition((float)m_posX, (float)m_posY); //*32 enlev�
+			spHache1.setPosition((float)m_posX, (float)m_posY); //*32 enlevé
 			window.draw(spHache1);
 
 		}
-		else if (a.asMilliseconds() >= 500 && a.asMilliseconds() <= 1000)
+		else if (hacheTime.asMilliseconds() >= 1000 && hacheTime.asMilliseconds() <= 2000)
 		{
 
 			if (boucleH == 1)
 			{
 				boucleH++;
-				
+
 			}
 			m_posY -= 32;
-			
+
 
 			if (m_posY < 0)
 			{
@@ -655,7 +577,7 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto,Enemie *teki1,Enemie *t
 			window.draw(spHache2);
 
 		}
-		else if (a.asMilliseconds() >= 1000 && a.asMilliseconds() <= 1500)
+		else if (hacheTime.asMilliseconds() >= 2000 && hacheTime.asMilliseconds() <= 3000)
 		{
 
 			if (boucleH == 2)
@@ -673,29 +595,25 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto,Enemie *teki1,Enemie *t
 			}
 			if (contact(teki1))
 			{
-
 				toto->supprimerHache();
 
 				//ANIM DEGATS
 				teki1->animDegats(window, teki1);
 				return;
-
 			}
 			if (contact(teki2))
 			{
-
 				toto->supprimerHache();
 
 				//ANIM DEGATS
 				teki2->animDegats(window, teki2);
 				return;
-
 			}
 			spHache3.setPosition((float)m_posX, (float)m_posY);//*32 enlev�
 			window.draw(spHache3);
 
 		}
-		else if (a.asMilliseconds() >= 1500 && a.asMilliseconds() <= 2000)
+		else if (hacheTime.asMilliseconds() >= 3000 && hacheTime.asMilliseconds() <= 4000)
 		{
 
 			if (boucleH == 3)
@@ -712,7 +630,6 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto,Enemie *teki1,Enemie *t
 			}
 			if (contact(teki1))
 			{
-
 				toto->supprimerHache();
 
 				//ANIM DEGATS
@@ -734,7 +651,7 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto,Enemie *teki1,Enemie *t
 			window.draw(spHache4);
 
 		}
-		else if (a.asMilliseconds() >= 2000 && a.asMilliseconds() <= 2500)
+		else if (hacheTime.asMilliseconds() >= 4000 && hacheTime.asMilliseconds() <= 5000)
 		{
 			if (boucleH == 4)
 			{
@@ -771,223 +688,60 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto,Enemie *teki1,Enemie *t
 			window.draw(spHache1);
 		}
 
-		else if (a.asMilliseconds() >= 2500)
+		else if (hacheTime.asMilliseconds() >= 5000)
 		{
 			attaquer = false;
 			toto->supprimerHache();
 
 		}
 
+		*/
+	
 	} // FIN CASE 'N'
 
 		break;
 
 	case 'E':
 	{
-
-		if (a.asMilliseconds() >= 0 && a.asMilliseconds() <= 500)
+		m_posX += (int)(hacheTime.asSeconds() + 1) * 5;
+	
+		//on verifie a chaque espace de 32 si un enemie est présent
+		if (m_lastPosX + m_posX >= 32)
 		{
-			if (boucleH == 0)
-			{
-				boucleH++;
-			}
-				if (contact(teki1))
-				{
+			m_lastPosX = m_posX;
 
-					teki1->set_attacked(true);
-					hacheUp = false;
-					teki1->set_animDegatsOn(true);
-
-
-					return;
-
-				}
-				else if (contact(teki2))
-				{
-
-					teki2->set_attacked(true);
-					hacheUp = false;
-					//ANIM DEGATS
-					teki2->set_animDegatsOn(true);
-					return;
-
-				
-
-
-			}
-
-			spHache1.setPosition((float)m_posX, (float)m_posY); //*32 enlev�
-			window.draw(spHache1);
-
-		}
-		else if (a.asMilliseconds() >= 500 && a.asMilliseconds() <= 1000)
-		{
-
-			if (boucleH == 1)
-			{
-				boucleH++;
-
-			}
-
-			m_posX += 32;
-
-			if (m_posX > 320)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
 			if (contact(teki1))
 			{
-
 				teki1->set_attacked(true);
 				hacheUp = false;
 				teki1->set_animDegatsOn(true);
-
-
 				return;
-
 			}
 			else if (contact(teki2))
 			{
-
 				teki2->set_attacked(true);
 				hacheUp = false;
 				//ANIM DEGATS
 				teki2->set_animDegatsOn(true);
 				return;
-
 			}
-			spHache2.setPosition((float)m_posX, (float)m_posY);//*32 enlev�
-			window.draw(spHache2);
 
 		}
-		else if (a.asMilliseconds() >= 1000 && a.asMilliseconds() <= 1500)
+		m_angle = hacheTime.asSeconds() * 180;
+
+		int angle = 0;
+		if (m_angle > 360.0f)
 		{
-
-			if (boucleH == 2)
-			{
-				boucleH++;
-
-			}
-			m_posX += 64;
-
-			if (m_posX > 320)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-			if (contact(teki1))
-			{
-
-				teki1->set_attacked(true);
-				hacheUp = false;
-				teki1->set_animDegatsOn(true);
-
-
-				return;
-
-			}
-			else if (contact(teki2))
-			{
-
-				teki2->set_attacked(true);
-				hacheUp = false;
-				//ANIM DEGATS
-				teki2->set_animDegatsOn(true);
-				return;
-
-			}
-			spHache3.setPosition((float)m_posX, (float)m_posY);//*32 enlev�
-			window.draw(spHache3);
-
+			angle = (int)std::round(m_angle);
+			angle %= 360;
+			m_angle = (float)angle;
 		}
-		else if (a.asMilliseconds() >= 1500 && a.asMilliseconds() <= 2000)
-		{
+		spHache1.setOrigin(16.0f, 16.0f);
+		spHache1.setRotation(m_angle);
+		spHache1.setPosition((float)m_posX , (float)m_posY + 16.0f);
 
-			if (boucleH == 3)
-			{
-				boucleH++;
-			}
-			m_posX += 96;
+		window.draw(spHache1);
 
-			if (m_posX > 320)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-			if (contact(teki1))
-			{
-
-				teki1->set_attacked(true);
-				hacheUp = false;
-				teki1->set_animDegatsOn(true);
-
-
-				return;
-
-			}
-			else if (contact(teki2))
-			{
-
-				teki2->set_attacked(true);
-				hacheUp = false;
-				//ANIM DEGATS
-				teki2->set_animDegatsOn(true);
-				return;
-
-			}
-			spHache4.setPosition((float)m_posX, (float)m_posY);//*32 enlev�
-			window.draw(spHache4);
-
-		}
-		else if (a.asMilliseconds() >= 2000 && a.asMilliseconds() <= 2500)
-		{
-			if (boucleH == 4)
-			{
-				boucleH++;
-			}
-			m_posX += 128;
-
-			if (m_posX > 320)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-			if (contact(teki1))
-			{
-
-				teki1->set_attacked(true);
-				hacheUp = false;
-				teki1->set_animDegatsOn(true);
-
-
-				return;
-
-			}
-			else if (contact(teki2))
-			{
-
-				teki2->set_attacked(true);
-				hacheUp = false;
-				//ANIM DEGATS
-				teki2->set_animDegatsOn(true);
-				return;
-
-			}
-			spHache1.setPosition((float)m_posX, (float)m_posY);//*32 enlev�
-			window.draw(spHache1);
-		}
-
-		else if (a.asMilliseconds() >= 2500)
-		{
-			attaquer = false;
-			toto->supprimerHache();
-
-		}
 
 	} // FIN CASE 'E'
 
@@ -995,392 +749,117 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto,Enemie *teki1,Enemie *t
 
 	case 'O':
 	{
-		if (a.asMilliseconds() >= 0 && a.asMilliseconds() <= 500)
+		m_posX -= (int)(hacheTime.asSeconds() + 1) * 5;
+
+		//on verifie a chaque espace de 32 si un enemie est présent
+		if (m_posX + m_lastPosX >= 32)
 		{
-			if (boucleH == 0)
-			{
-				boucleH++;
-			}
+			m_lastPosX = m_posX;
 
-			spHache1.setPosition((float)m_posX, (float)m_posY);
-			window.draw(spHache1);
-
-		}
-		else if (a.asMilliseconds() >= 500 && a.asMilliseconds() <= 1000)
-		{
-
-			if (boucleH == 1)
-			{
-				boucleH++;
-			}
-
-			m_posX -= 32;
-
-			if ( m_posX < 0)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
 			if (contact(teki1))
 			{
-
-				teki1->set_attacked(true);
 				hacheUp = false;
 				teki1->set_animDegatsOn(true);
-
-
 				return;
-
 			}
 			else if (contact(teki2))
 			{
-
-				teki2->set_attacked(true);
 				hacheUp = false;
 				//ANIM DEGATS
 				teki2->set_animDegatsOn(true);
 				return;
 			}
 
-			spHache2.setPosition((float)m_posX, (float)m_posY);
-			window.draw(spHache2);
-
 		}
-		else if (a.asMilliseconds() >= 1000 && a.asMilliseconds() <= 1500)
+		m_angle = hacheTime.asSeconds() * 180;
+
+		int angle = 0;
+		if (m_angle > 360.0f)
 		{
-
-			if (boucleH == 2)
-			{
-				boucleH++;
-			}
-			m_posX -= 64;
-
-			if ( m_posX < 0)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-			if (contact(teki1))
-			{
-
-				teki1->set_attacked(true);
-				hacheUp = false;
-				teki1->set_animDegatsOn(true);
-
-
-				return;
-
-			}
-			else if (contact(teki2))
-			{
-
-				teki2->set_attacked(true);
-				hacheUp = false;
-				//ANIM DEGATS
-				teki2->set_animDegatsOn(true);
-				return;
-			}
-			spHache3.setPosition((float)m_posX , (float)m_posY );
-			window.draw(spHache3);
-
+			angle = (int)std::round(m_angle);
+			angle %= 360;
+			m_angle = (float)angle;
 		}
-		else if (a.asMilliseconds() >= 1500 && a.asMilliseconds() <= 2000)
-		{
+		spHache1.setOrigin(16.0f, 16.0f);
+		spHache1.setRotation(m_angle);
+		spHache1.setPosition((float)m_posX , (float)m_posY + 16.0f);
 
-			if (boucleH == 3)
-			{
-				boucleH++;
-			}
-			m_posX -= 96;
-
-			if (m_posX < 0)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-			if (contact(teki1))
-			{
-
-				teki1->set_attacked(true);
-				hacheUp = false;
-				teki1->set_animDegatsOn(true);
-
-
-				return;
-
-			}
-			else if (contact(teki2))
-			{
-
-				teki2->set_attacked(true);
-				hacheUp = false;
-				//ANIM DEGATS
-				teki2->set_animDegatsOn(true);
-				return;
-			}
-			spHache4.setPosition((float)m_posX , (float)m_posY);
-			window.draw(spHache4);
-
-		}
-		else if (a.asMilliseconds() >= 2000 && a.asMilliseconds() <= 2500)
-		{
-			if (boucleH == 4)
-			{
-				boucleH++;
-			}
-			m_posX -= 128;
-
-			if (m_posX < 0)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-			if (contact(teki1))
-			{
-
-				teki1->set_attacked(true);
-				hacheUp = false;
-				teki1->set_animDegatsOn(true);
-
-
-				return;
-
-			}
-			else if (contact(teki2))
-			{
-
-				teki2->set_attacked(true);
-				hacheUp = false;
-				//ANIM DEGATS
-				teki2->set_animDegatsOn(true);
-				return;
-			}
-			spHache1.setPosition((float)m_posX, (float)m_posY);
-			window.draw(spHache1);
-		}
-
-		else if (a.asMilliseconds() >= 2500)
-		{
-			attaquer = false;
-			toto->supprimerHache();
-
-		}
-
-	} // FIN CASE 'W'
+		window.draw(spHache1);
+	}
 	break;
 
 	case 'S':
 	{
-		if (a.asMilliseconds() >= 0 && a.asMilliseconds() <= 500)
+		m_posY += (int)(hacheTime.asSeconds() + 1) * 5;
+	
+		//on verifie a chaque espace de 32 si un enemie est présent
+		if (m_lastPosY + m_posY >= 32)
 		{
-			if (boucleH == 0)
-			{
-				boucleH++;
-			}
+			m_lastPosY = m_posY;
 
-			spHache1.setPosition((float)m_posX , (float)m_posY);
-			window.draw(spHache1);
-
-		}
-		else if (a.asMilliseconds() >= 500 && a.asMilliseconds() <= 1000)
-		{
-
-			if (boucleH == 1)
-			{
-				boucleH++;
-			}
-
-			m_posY += 32;
-
-			if (m_posY > 320 )
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
 			if (contact(teki1))
 			{
-
 				teki1->set_attacked(true);
 				hacheUp = false;
 				teki1->set_animDegatsOn(true);
-
-
 				return;
-
 			}
 			else if (contact(teki2))
 			{
-
 				teki2->set_attacked(true);
 				hacheUp = false;
 				//ANIM DEGATS
 				teki2->set_animDegatsOn(true);
 				return;
 			}
-			spHache2.setPosition((float)m_posX, (float)m_posY);
-			window.draw(spHache2);
 
 		}
-		else if (a.asMilliseconds() >= 1000 && a.asMilliseconds() <= 1500)
+		m_angle = hacheTime.asSeconds() * 180;
+
+		int angle = 0;
+		if (m_angle > 360.0f)
 		{
-
-			if (boucleH == 2)
-			{
-				boucleH++;
-			}
-			m_posY += 64;
-
-			if (m_posY > 320)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-			if (contact(teki1))
-			{
-
-				teki1->set_attacked(true);
-				hacheUp = false;
-				teki1->set_animDegatsOn(true);
-
-
-				return;
-
-			}
-			else if (contact(teki2))
-			{
-
-				teki2->set_attacked(true);
-				hacheUp = false;
-				//ANIM DEGATS
-				teki2->set_animDegatsOn(true);
-				return;
-			}
-			spHache3.setPosition((float)m_posX, (float)m_posY);
-			window.draw(spHache3);
-
+			angle = (int)std::round(m_angle);
+			angle %= 360;
+			m_angle = (float)angle;
 		}
-		else if (a.asMilliseconds() >= 1500 && a.asMilliseconds() <= 2000)
-		{
+		spHache1.setOrigin(16.0f, 16.0f);
+		spHache1.setRotation(m_angle);
+		spHache1.setPosition(m_posX + 16.0f, (float)m_posY);
 
-			if (boucleH == 3)
-			{
-				boucleH++;
-			}
-			m_posY += 96;
-
-			if (m_posY > 320 )
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-			if (contact(teki1))
-			{
-
-				teki1->set_attacked(true);
-				hacheUp = false;
-				teki1->set_animDegatsOn(true);
-
-
-				return;
-
-			}
-			else if (contact(teki2))
-			{
-
-				teki2->set_attacked(true);
-				hacheUp = false;
-				//ANIM DEGATS
-				teki2->set_animDegatsOn(true);
-				return;
-			}
-			spHache4.setPosition((float)m_posX, (float)m_posY);
-			window.draw(spHache4);
-
-		}
-		else if (a.asMilliseconds() >= 2000 && a.asMilliseconds() <= 2500)
-		{
-			if (boucleH == 4)
-			{
-				boucleH++;
-			}
-
-			m_posY += 128;
-
-			if (m_posY > 320 )
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-			if (contact(teki1))
-			{
-
-				teki1->set_attacked(true);
-				hacheUp = false;
-				teki1->set_animDegatsOn(true);
-
-
-				return;
-
-			}
-			else if (contact(teki2))
-			{
-
-				teki2->set_attacked(true);
-				hacheUp = false;
-				//ANIM DEGATS
-				teki2->set_animDegatsOn(true);
-				return;
-			}
-			spHache1.setPosition((float)m_posX , (float)m_posY );
-			window.draw(spHache1);
-		}
-
-		else if (a.asMilliseconds() >= 2500)
-		{
-			attaquer = false;
-			toto->supprimerHache();
-
-		}
+		window.draw(spHache1);
+	
 
 	} // FIN CASE 'S'
 	 break;
 
 	} // FIN SWITCH
-
-
-
-
 }
 
-/*
-					*      ************************				*
-					*	**										*
-					*											*
-				    * ICI ON PASSE A L'ANIM avec 1 ENEMIE !!!
-					*
-					*
-					*
-					*		*********************
-								
-*/		
-
-
-void Hache::deplacement(sf::Clock &clock, Guerrier *toto, Enemie *teki, Map &map, sf::RenderWindow &window, bool &attaquer, bool &hacheUp)
+// ****************    ANIM AVEC 1 ENEMIE *******************
+void Hache::deplacement(Guerrier *toto, Enemie *teki, sf::Clock &hacheClock, Map &map, sf::RenderWindow &window, bool &attaquer, bool &hacheUp)
 {
+	hacheTime = hacheClock.getElapsedTime();
+	std::cout << hacheTime.asSeconds() << std::endl;
 
-	sf::Time a = clock.getElapsedTime();
-
-
-	if (m_posY < 0 || m_posX < 0)
+	if (m_posY < 0 || m_posX < 0 || m_posX > 320 || m_posY > 320)
 	{
+		attaquer = false;
+		toto->supprimerHache();
+		return;
+	}
+
+	if (boucleH == 0)
+	{
+		boucleH = 1;
+		hacheClock.restart();
+		hacheTime = hacheClock.getElapsedTime();
+	}
+
+
+	if (hacheTime.asSeconds() > 5.0f)
+	{
+		boucleH = 0;
 		attaquer = false;
 		toto->supprimerHache();
 		return;
@@ -1388,166 +867,225 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto, Enemie *teki, Map &map
 
 	switch (m_direction)
 	{
-
-
 	case 'N':
 	{
+		m_posY -= (int)(hacheTime.asSeconds() + 1) * 5;
 
-
-		if (a.asMilliseconds() >= 0 && a.asMilliseconds() <= 500)
+		//on verifie a chaque espace de 32 si un enemie est présent
+		if (m_posY + m_lastPosY >= 32)
 		{
-			if (boucleH == 0)
-			{
-				boucleH++;
+			m_lastPosY = m_posY;
 
-				if (contact(teki))
-				{
-
-					teki->set_attacked(true);
-					hacheUp = false;
-					teki->set_animDegatsOn(true);
-
-
-					return;
-
-				}
-				
-
-
-			}
-
-			spHache1.setPosition((float)m_posX, (float)m_posY); //*32 enlev�
-			window.draw(spHache1);
-
-		}
-		else if (a.asMilliseconds() >= 500 && a.asMilliseconds() <= 1000)
-		{
-
-			if (boucleH == 1)
-			{
-				boucleH++;
-
-			}
-
-			m_posY -= 32;
-
-			if (m_posY < 0)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
 			if (contact(teki))
 			{
-
-				toto->supprimerHache();
-
-				//ANIM DEGATS
-				teki->animDegats(window, teki);
+				teki->set_attacked(true);
+				hacheUp = false;
+				teki->set_animDegatsOn(true);
 				return;
-
 			}
-			
-			spHache2.setPosition((float)m_posX, (float)m_posY);//*32 enlev�
-			window.draw(spHache2);
 
 		}
-		else if (a.asMilliseconds() >= 1000 && a.asMilliseconds() <= 1500)
+		m_angle = hacheTime.asSeconds() * 180;
+
+		int angle = 0;
+		if (m_angle > 360.0f)
+		{
+			angle = (int)std::round(m_angle);
+			angle %= 360;
+			m_angle = (float)angle;
+		}
+		spHache1.setOrigin(16.0f, 16.0f);
+		spHache1.setRotation(m_angle);
+		spHache1.setPosition(m_posX + 16.0f, (float)m_posY);
+
+		window.draw(spHache1);
+
+		/*
+		if (hacheTime.asMilliseconds() >= 0 && hacheTime.asMilliseconds() <= 1000)
+		{
+		if (boucleH == 0)
+		{
+		boucleH++;
+		}
+		if (contact(teki1))
+		{
+		teki1->set_attacked(true);
+		hacheUp = false;
+		teki1->set_animDegatsOn(true);
+		return;
+		}
+		else if (contact(teki2))
+		{
+		teki2->set_attacked(true);
+		hacheUp = false;
+		//ANIM DEGATS
+		teki2->set_animDegatsOn(true);
+		return;
+		}
+
+		spHache1.setPosition((float)m_posX, (float)m_posY); //*32 enlevé
+		window.draw(spHache1);
+
+		}
+		else if (hacheTime.asMilliseconds() >= 1000 && hacheTime.asMilliseconds() <= 2000)
 		{
 
-			if (boucleH == 2)
-			{
-				boucleH++;
-
-			}
-			m_posY -= 64;
-
-			if (m_posY < 0)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-			if (contact(teki))
-			{
-
-				toto->supprimerHache();
-
-				//ANIM DEGATS
-				teki->animDegats(window, teki);
-				return;
-
-			}
-		
-			spHache3.setPosition((float)m_posX, (float)m_posY);//*32 enlev�
-			window.draw(spHache3);
+		if (boucleH == 1)
+		{
+		boucleH++;
 
 		}
-		else if (a.asMilliseconds() >= 1500 && a.asMilliseconds() <= 2000)
+		m_posY -= 32;
+
+
+		if (m_posY < 0)
+		{
+		attaquer = false;
+		toto->supprimerHache();
+		return;
+		}
+		if (contact(teki1))
 		{
 
-			if (boucleH == 3)
-			{
-				boucleH++;
-			}
-			m_posY -= 96;
-
-			if (m_posY < 0)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-			if (contact(teki))
-			{
-
-				toto->supprimerHache();
-
-				//ANIM DEGATS
-				teki->animDegats(window, teki);
-				return;
-
-			}
-			
-			spHache4.setPosition((float)m_posX, (float)m_posY);//*32 enlev�
-			window.draw(spHache4);
+		toto->supprimerHache();
+		//ANIM DEGATS
+		teki1->animDegats(window, teki1);
+		return;
 
 		}
-		else if (a.asMilliseconds() >= 2000 && a.asMilliseconds() <= 2500)
+		if (contact(teki2))
 		{
-			if (boucleH == 4)
-			{
-				boucleH++;
-			}
-			m_posY -= 128;
 
-			if (m_posY < 0)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-			if (contact(teki))
-			{
+		toto->supprimerHache();
 
-				toto->supprimerHache();
+		//ANIM DEGATS
+		teki2->animDegats(window, teki2);
+		return;
 
-				//ANIM DEGATS
-				teki->animDegats(window, teki);
-				return;
-
-			}
-			
-			spHache1.setPosition((float)m_posX, (float)m_posY);//*32 enlev�
-			window.draw(spHache1);
 		}
+		spHache2.setPosition((float)m_posX, (float)m_posY);//*32 enlev�
+		window.draw(spHache2);
 
-		else if (a.asMilliseconds() >= 2500)
+		}
+		else if (hacheTime.asMilliseconds() >= 2000 && hacheTime.asMilliseconds() <= 3000)
 		{
-			attaquer = false;
-			toto->supprimerHache();
+
+		if (boucleH == 2)
+		{
+		boucleH++;
 
 		}
+		m_posY -= 64;
+
+		if (m_posY < 0)
+		{
+		attaquer = false;
+		toto->supprimerHache();
+		return;
+		}
+		if (contact(teki1))
+		{
+		toto->supprimerHache();
+
+		//ANIM DEGATS
+		teki1->animDegats(window, teki1);
+		return;
+		}
+		if (contact(teki2))
+		{
+		toto->supprimerHache();
+
+		//ANIM DEGATS
+		teki2->animDegats(window, teki2);
+		return;
+		}
+		spHache3.setPosition((float)m_posX, (float)m_posY);//*32 enlev�
+		window.draw(spHache3);
+
+		}
+		else if (hacheTime.asMilliseconds() >= 3000 && hacheTime.asMilliseconds() <= 4000)
+		{
+
+		if (boucleH == 3)
+		{
+		boucleH++;
+		}
+		m_posY -= 96;
+
+		if (m_posY < 0)
+		{
+		attaquer = false;
+		toto->supprimerHache();
+		return;
+		}
+		if (contact(teki1))
+		{
+		toto->supprimerHache();
+
+		//ANIM DEGATS
+		teki1->animDegats(window, teki1);
+		return;
+
+		}
+		else if (contact(teki2))
+		{
+
+		toto->supprimerHache();
+
+		//ANIM DEGATS
+		teki2->animDegats(window, teki2);
+		return;
+
+		}
+		spHache4.setPosition((float)m_posX, (float)m_posY);//*32 enlev�
+		window.draw(spHache4);
+
+		}
+		else if (hacheTime.asMilliseconds() >= 4000 && hacheTime.asMilliseconds() <= 5000)
+		{
+		if (boucleH == 4)
+		{
+		boucleH++;
+		}
+		m_posY -= 128;
+		if (m_posY < 0 )
+		{
+		attaquer = false;
+		toto->supprimerHache();
+		return;
+		}
+		if (contact(teki1))
+		{
+
+		toto->supprimerHache();
+
+		//ANIM DEGATS
+		teki1->animDegats(window, teki1);
+		return;
+
+		}
+		else if (contact(teki2))
+		{
+
+		toto->supprimerHache();
+
+		//ANIM DEGATS
+		teki2->animDegats(window, teki2);
+		return;
+
+		}
+		spHache1.setPosition((float)m_posX, (float)m_posY);//*32 enlev�
+		window.draw(spHache1);
+		}
+
+		else if (hacheTime.asMilliseconds() >= 5000)
+		{
+		attaquer = false;
+		toto->supprimerHache();
+
+		}
+
+		*/
 
 	} // FIN CASE 'N'
 
@@ -1555,163 +1093,37 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto, Enemie *teki, Map &map
 
 	case 'E':
 	{
+		m_posX += (int)(hacheTime.asSeconds() + 1) * 5;
 
-		if (a.asMilliseconds() >= 0 && a.asMilliseconds() <= 500)
+		//on verifie a chaque espace de 32 si un enemie est présent
+		if (m_lastPosX + m_posX >= 32)
 		{
-			if (boucleH == 0)
-			{
-				boucleH++;
+			m_lastPosX = m_posX;
 
-				if (contact(teki))
-				{
-
-					teki->set_attacked(true);
-					hacheUp = false;
-					teki->set_animDegatsOn(true);
-
-
-					return;
-
-				}
-				
-			}
-
-			spHache1.setPosition((float)m_posX, (float)m_posY); //*32 enlev�
-			window.draw(spHache1);
-
-		}
-		else if (a.asMilliseconds() >= 500 && a.asMilliseconds() <= 1000)
-		{
-
-			if (boucleH == 1)
-			{
-				boucleH++;
-
-			}
-
-			m_posX += 32;
-
-			if (m_posX > 320)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
 			if (contact(teki))
 			{
-
 				teki->set_attacked(true);
 				hacheUp = false;
 				teki->set_animDegatsOn(true);
-
-
 				return;
-
 			}
-			
-			spHache2.setPosition((float)m_posX, (float)m_posY);//*32 enlev�
-			window.draw(spHache2);
 
 		}
-		else if (a.asMilliseconds() >= 1000 && a.asMilliseconds() <= 1500)
+		m_angle = hacheTime.asSeconds() * 180;
+
+		int angle = 0;
+		if (m_angle > 360.0f)
 		{
-
-			if (boucleH == 2)
-			{
-				boucleH++;
-
-			}
-			m_posX += 64;
-
-			if (m_posX > 320)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-			if (contact(teki))
-			{
-
-				teki->set_attacked(true);
-				hacheUp = false;
-				teki->set_animDegatsOn(true);
-
-
-				return;
-
-			}
-			
-			spHache3.setPosition((float)m_posX, (float)m_posY);//*32 enlev�
-			window.draw(spHache3);
-
+			angle = (int)std::round(m_angle);
+			angle %= 360;
+			m_angle = (float)angle;
 		}
-		else if (a.asMilliseconds() >= 1500 && a.asMilliseconds() <= 2000)
-		{
+		spHache1.setOrigin(16.0f, 16.0f);
+		spHache1.setRotation(m_angle);
+		spHache1.setPosition((float)m_posX, (float)m_posY + 16.0f);
 
-			if (boucleH == 3)
-			{
-				boucleH++;
-			}
-			m_posX += 96;
+		window.draw(spHache1);
 
-			if (m_posX > 320)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-			if (contact(teki))
-			{
-
-				teki->set_attacked(true);
-				hacheUp = false;
-				teki->set_animDegatsOn(true);
-
-
-				return;
-
-			}
-			
-			spHache4.setPosition((float)m_posX, (float)m_posY);//*32 enlev�
-			window.draw(spHache4);
-
-		}
-		else if (a.asMilliseconds() >= 2000 && a.asMilliseconds() <= 2500)
-		{
-			if (boucleH == 4)
-			{
-				boucleH++;
-			}
-			m_posX += 128;
-
-			if (m_posX > 320)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-			if (contact(teki))
-			{
-
-				teki->set_attacked(true);
-				hacheUp = false;
-				teki->set_animDegatsOn(true);
-
-
-				return;
-
-			}
-			
-			spHache1.setPosition((float)m_posX, (float)m_posY);//*32 enlev�
-			window.draw(spHache1);
-		}
-
-		else if (a.asMilliseconds() >= 2500)
-		{
-			attaquer = false;
-			toto->supprimerHache();
-
-		}
 
 	} // FIN CASE 'E'
 
@@ -1719,310 +1131,78 @@ void Hache::deplacement(sf::Clock &clock, Guerrier *toto, Enemie *teki, Map &map
 
 	case 'O':
 	{
-		if (a.asMilliseconds() >= 0 && a.asMilliseconds() <= 500)
+		m_posX -= (int)(hacheTime.asSeconds() + 1) * 5;
+
+		//on verifie a chaque espace de 32 si un enemie est présent
+		if (m_posX + m_lastPosX >= 32)
 		{
+			m_lastPosX = m_posX;
+
 			if (contact(teki))
 			{
-
 				teki->set_attacked(true);
 				hacheUp = false;
 				teki->set_animDegatsOn(true);
-
-
 				return;
-
 			}
 			
 
-			spHache1.setPosition((float)m_posX, (float)m_posY);
-			window.draw(spHache1);
-
 		}
-		else if (a.asMilliseconds() >= 500 && a.asMilliseconds() <= 1000)
+		m_angle = hacheTime.asSeconds() * 180;
+
+		int angle = 0;
+		if (m_angle > 360.0f)
 		{
-
-			if (boucleH == 1)
-			{
-				boucleH++;
-			}
-
-			m_posX -= 32;
-
-			if (m_posX < 0)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-			if (contact(teki))
-			{
-
-				teki->set_attacked(true);
-				hacheUp = false;
-				teki->set_animDegatsOn(true);
-
-
-				return;
-
-			}
-			spHache2.setPosition((float)m_posX, (float)m_posY);
-			window.draw(spHache2);
-
+			angle = (int)std::round(m_angle);
+			angle %= 360;
+			m_angle = (float)angle;
 		}
-		else if (a.asMilliseconds() >= 1000 && a.asMilliseconds() <= 1500)
-		{
+		spHache1.setOrigin(16.0f, 16.0f);
+		spHache1.setRotation(m_angle);
+		spHache1.setPosition((float)m_posX, (float)m_posY + 16.0f);
 
-			if (boucleH == 2)
-			{
-				boucleH++;
-			}
-			m_posX -= 64;
-
-			if (m_posX < 0)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-			if (contact(teki))
-			{
-
-				teki->set_attacked(true);
-				hacheUp = false;
-				teki->set_animDegatsOn(true);
-
-
-				return;
-
-			}
-			spHache3.setPosition((float)m_posX, (float)m_posY);
-			window.draw(spHache3);
-
-		}
-		else if (a.asMilliseconds() >= 1500 && a.asMilliseconds() <= 2000)
-		{
-
-			if (boucleH == 3)
-			{
-				boucleH++;
-			}
-			m_posX -= 96;
-
-			if (m_posX < 0)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-			if (contact(teki))
-			{
-
-				teki->set_attacked(true);
-				hacheUp = false;
-				teki->set_animDegatsOn(true);
-
-
-				return;
-
-			}
-			spHache4.setPosition((float)m_posX, (float)m_posY);
-			window.draw(spHache4);
-
-		}
-		else if (a.asMilliseconds() >= 2000 && a.asMilliseconds() <= 2500)
-		{
-			if (boucleH == 4)
-			{
-				boucleH++;
-			}
-			m_posX -= 128;
-
-			if (m_posX < 0)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-			if (contact(teki))
-			{
-
-				teki->set_attacked(true);
-				hacheUp = false;
-				teki->set_animDegatsOn(true);
-
-
-				return;
-
-			}
-			spHache1.setPosition((float)m_posX, (float)m_posY);
-			window.draw(spHache1);
-		}
-
-		else if (a.asMilliseconds() >= 2500)
-		{
-			attaquer = false;
-			toto->supprimerHache();
-
-		}
-
-	} // FIN CASE 'W'
+		window.draw(spHache1);
+	}
 	break;
 
 	case 'S':
 	{
-		if (a.asMilliseconds() >= 0 && a.asMilliseconds() <= 500)
+		m_posY += (int)(hacheTime.asSeconds() + 1) * 5;
+
+		//on verifie a chaque espace de 32 si un enemie est présent
+		if (m_lastPosY + m_posY >= 32)
 		{
-			if (boucleH == 0)
-			{
-				boucleH++;
-			}
+			m_lastPosY = m_posY;
+
 			if (contact(teki))
 			{
-
 				teki->set_attacked(true);
 				hacheUp = false;
 				teki->set_animDegatsOn(true);
-
-
 				return;
-
 			}
-			spHache1.setPosition((float)m_posX, (float)m_posY);
-			window.draw(spHache1);
+			
 
 		}
-		else if (a.asMilliseconds() >= 500 && a.asMilliseconds() <= 1000)
+		m_angle = hacheTime.asSeconds() * 180;
+
+		int angle = 0;
+		if (m_angle > 360.0f)
 		{
-
-			if (boucleH == 1)
-			{
-				boucleH++;
-			}
-
-			m_posY += 32;
-
-			if (m_posY > 320)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-			if (contact(teki))
-			{
-
-				teki->set_attacked(true);
-				hacheUp = false;
-				teki->set_animDegatsOn(true);
-
-
-				return;
-
-			}
-			spHache2.setPosition((float)m_posX, (float)m_posY);
-			window.draw(spHache2);
-
+			angle = (int)std::round(m_angle);
+			angle %= 360;
+			m_angle = (float)angle;
 		}
-		else if (a.asMilliseconds() >= 1000 && a.asMilliseconds() <= 1500)
-		{
+		spHache1.setOrigin(16.0f, 16.0f);
+		spHache1.setRotation(m_angle);
+		spHache1.setPosition(m_posX + 16.0f, (float)m_posY);
 
-			if (boucleH == 2)
-			{
-				boucleH++;
-			}
-			m_posY += 64;
+		window.draw(spHache1);
 
-			if (m_posY > 320)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-			if (contact(teki))
-			{
-
-				teki->set_attacked(true);
-				hacheUp = false;
-				teki->set_animDegatsOn(true);
-
-
-				return;
-
-			}
-			spHache3.setPosition((float)m_posX, (float)m_posY);
-			window.draw(spHache3);
-
-		}
-		else if (a.asMilliseconds() >= 1500 && a.asMilliseconds() <= 2000)
-		{
-
-			if (boucleH == 3)
-			{
-				boucleH++;
-			}
-			m_posY += 96;
-
-			if (m_posY > 320)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-			if (contact(teki))
-			{
-
-				teki->set_attacked(true);
-				hacheUp = false;
-				teki->set_animDegatsOn(true);
-
-
-				return;
-
-			}
-			spHache4.setPosition((float)m_posX, (float)m_posY);
-			window.draw(spHache4);
-
-		}
-		else if (a.asMilliseconds() >= 2000 && a.asMilliseconds() <= 2500)
-		{
-			if (boucleH == 4)
-			{
-				boucleH++;
-			}
-
-			m_posY += 128;
-
-			if (m_posY > 320)
-			{
-				attaquer = false;
-				toto->supprimerHache();
-				return;
-			}
-			if (contact(teki))
-			{
-
-				teki->set_attacked(true);
-				hacheUp = false;
-				teki->set_animDegatsOn(true);
-
-
-				return;
-
-			}
-			spHache1.setPosition((float)m_posX, (float)m_posY);
-			window.draw(spHache1);
-		}
-
-		else if (a.asMilliseconds() >= 2500)
-		{
-			attaquer = false;
-			toto->supprimerHache();
-
-		}
 
 	} // FIN CASE 'S'
 	break;
 
 	} // FIN SWITCH
-
-
 }
+
