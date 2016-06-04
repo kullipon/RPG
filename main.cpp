@@ -5,25 +5,28 @@
 #include "Map.h"
 #include "PersonnageBase.h"
 #include "Joueur.h"
-
 #include "Flamme.h"
-
 #include <iostream>
 #include <time.h>
 #include <cstdlib>
+#include "ObAttaquer.h"
+#include <string>
 
 
 //#include <thread>
 //#include <mutex>
-#include "ObAttaquer.h"
 
 
-bool deplacementOK(false);
 
+bool deplacementOK = false;
 sf::Clock hacheClock;
 
 int main()
 {
+
+
+
+
 	srand(time(0));
 	bool attaquer(false);
 	sf::RenderWindow window(sf::VideoMode(352, 352), "Zelda Like", sf::Style::Resize);

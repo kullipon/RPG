@@ -12,8 +12,6 @@ Guerrier::Guerrier() : Joueur()
 	if (!textWar.loadFromFile("texture_3.png"))
 	{
 		std::cout << "Erreur de chargement de la texture du guerrier" << std::endl;
-
-
 	}
 	else
 	{
@@ -23,10 +21,6 @@ Guerrier::Guerrier() : Joueur()
 		spWarUp_2.setTexture(textWar);
 		spWarUp.setTextureRect(sf::IntRect(64,0,32,32));
 		spWarUp_2.setTextureRect(sf::IntRect(96,0,32,32));
-
-		
-		
-
 	}
 	
 }
@@ -71,11 +65,11 @@ void Guerrier::attaquer(Enemie *teki1,Enemie *teki2,sf::Clock &hacheClock,Map &m
 	bool teki1Anim = teki1->get_animDegatsON();
 	bool teki2Anim = teki2->get_animDegatsON();
 
-	if (teki1Anim == true || teki2Anim == true)
+	if (teki1Anim || teki2Anim)
 	{
 		return;
 	}
-	if (m_hacheUp == false && teki1Anim == false && teki2Anim == false)
+	if (!m_hacheUp && !teki1Anim && !teki2Anim)
 	{
 	hache = new Hache(this,window,hacheClock);
 	m_hacheUp = true;
@@ -96,7 +90,7 @@ void Guerrier::attaquer(Enemie *teki,sf::Clock &hacheClock, Map &map, sf::Render
 			return;
 		}
 
-		if (m_hacheUp == false && teki1Anim == false)
+		if (!m_hacheUp && !teki1Anim)
 		{
 			hache = new Hache(this,window,hacheClock);
 			m_hacheUp = true;

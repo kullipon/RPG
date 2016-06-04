@@ -73,6 +73,7 @@ Hache::Hache(Guerrier *guerrier,sf::RenderWindow &window,sf::Clock &hacheClock) 
 
 		case 'O':
 			{
+			spHache1.setTextureRect(sf::IntRect(288, 0, -31, 32)); // MAJ FLIP X (decalage +32 et longueur -31)
 			m_posX = (int)(guerrier->get_m_realX()-32);
 			m_posY = (int)guerrier->get_m_realY();
 			m_direction = 'O';
@@ -164,6 +165,9 @@ void Hache::deplacement(Guerrier *toto, sf::Clock &hacheClock, Map &map, sf::Ren
 		window.draw(spHache1);
 
 		/*
+
+		---VIEUX CODE ANIM---
+
 		if (hacheTime.asMilliseconds() >= 0 && hacheTime.asMilliseconds() <= 1000)
 		{
 		if (boucleH == 0)
@@ -445,7 +449,7 @@ void Hache::deplacement(Guerrier *toto, sf::Clock &hacheClock, Map &map, sf::Ren
 void Hache::deplacement(Guerrier *toto,Enemie *teki1,Enemie *teki2,sf::Clock &hacheClock, Map &map, sf::RenderWindow &window, bool &attaquer, bool &hacheUp)
 {
 	hacheTime = hacheClock.getElapsedTime();
-	std::cout << hacheTime.asSeconds() << std::endl;
+	//std::cout << hacheTime.asSeconds() << std::endl;
 
 	if (m_posY < 0 || m_posX < 0 || m_posX > 320 || m_posY > 320)
 	{
@@ -771,7 +775,7 @@ void Hache::deplacement(Guerrier *toto,Enemie *teki1,Enemie *teki2,sf::Clock &ha
 			}
 
 		}
-		m_angle = hacheTime.asSeconds() * 180;
+		m_angle = hacheTime.asSeconds() * -180.0f;
 
 		int angle = 0;
 		if (m_angle > 360.0f)
@@ -781,6 +785,7 @@ void Hache::deplacement(Guerrier *toto,Enemie *teki1,Enemie *teki2,sf::Clock &ha
 			m_angle = (float)angle;
 		}
 		spHache1.setOrigin(16.0f, 16.0f);
+		//spHache1.scale(-1.0f, 1.0f);		
 		spHache1.setRotation(m_angle);
 		spHache1.setPosition((float)m_posX , (float)m_posY + 16.0f);
 

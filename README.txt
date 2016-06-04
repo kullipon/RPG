@@ -1,5 +1,3 @@
-Ce fichier a été écrit avec VI sous Linux:
+﻿Ceci est mon projet C++
 
-
-Qui plus est: ceci est mon 1er depot sous LINUX avec GIT.
-
+C'est un jeu vue du dessus style RPG écrit en C++ / utilisant la Librairie SFML

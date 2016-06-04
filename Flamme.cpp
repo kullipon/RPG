@@ -3,6 +3,7 @@ int fBoucle = 0;
 sf::Time fTime;
 #include <cmath>
 
+unsigned char accent = 0x90;
 
 Flamme::Flamme() : m_posFlammeX(0), m_posFlammeY(0), m_autorisationCaseX(0), m_autorisationCaseY(0), m_alive(true), m_direction(0), m_destructionArbre(false), m_posArbreX(0), m_posArbreY(0), m_boucleAff(0)
 {
@@ -10,8 +11,6 @@ Flamme::Flamme() : m_posFlammeX(0), m_posFlammeY(0), m_autorisationCaseX(0), m_a
 	m_verifPosY = 0;
 	tempsPasse = 0.0f;
 	//m_time = m_clock.getElapsedTime();
-
-
 }
 
 
@@ -144,7 +143,7 @@ void Flamme::brulerArbre(sf::RenderWindow &window, Enemie *teki, Map &map)
 
 			if (map.setPosArbreVersSable((int)(m_posArbreX / 32), (int)(m_posArbreY / 32)) == true)
 			{
-				std::cout << "ARBRE REMPLACED PAR SABLE !" << std::endl;
+				std::cout << "ARBRE REMPLAC" << accent << " PAR SABLE !" << std::endl;
 
 			}
 			else
