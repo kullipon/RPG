@@ -20,9 +20,7 @@ Enemie::Enemie() : PersonnageBase(), m_attacked(false), m_animDegatsON(false), m
 	if (!texture.loadFromFile("texture_7.png"))
 	{
 		std::cout << "Erreur lors du chargement de la texture des teki1s" << std::endl;
-
-		exit(1);
-
+			
 	}
 	else
 	{
@@ -60,8 +58,6 @@ Enemie::Enemie(int x, int y, Map &map) : PersonnageBase(), m_attacked(false), m_
 	{
 		std::cout << "Erreur lors du chargement de la texture des teki1s" << std::endl;
 
-		exit(1);
-
 	}
 	else
 	{
@@ -95,18 +91,13 @@ Enemie::Enemie(int x, int y, Map &map, bool boss) : PersonnageBase(), m_attacked
 	{
 		std::cout << "Erreur lors du chargement de la texture de Peppa" << std::endl;
 
-		exit(1);
-
 	}
 	else
 	{
 		peppaSprite.setTexture(textPeppa);
 		peppaSprite.setTextureRect(sf::IntRect(0, 0, 64, 64));
-peppaSprite.setPosition((float)m_realX, (float)m_realY);
+		peppaSprite.setPosition((float)m_realX, (float)m_realY);
 	}
-
-
-
 
 }
 

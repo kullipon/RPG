@@ -38,8 +38,6 @@ Map::Map(Joueur *joueur1) : m_X(11) , m_Y(11) , m_boucle(0) {
      if (!stream)
      {
 	  cout << "Erreur lors de l\'ouverture de la map." << endl ;
-	  exit(1) ;
-
 
      }
      else
@@ -75,8 +73,6 @@ void Map::affichage(sf::RenderWindow &window) {
      if (!texture.loadFromFile("texture_7.png"))
      {
 	  cout << "Erreur lors du chargement de la texture de la map" << endl ;
-
-	  exit(1) ;
 
      }
      else
