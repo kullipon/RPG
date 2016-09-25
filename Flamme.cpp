@@ -11,6 +11,7 @@ Flamme::Flamme() : m_posFlammeX(0), m_posFlammeY(0), m_autorisationCaseX(0), m_a
 	m_verifPosY = 0;
 	tempsPasse = 0.0f;
 	//m_time = m_clock.getElapsedTime();
+	m_rotaAngle = 0.0f;
 }
 
 
@@ -51,23 +52,23 @@ bool Flamme::get_destructionArbre()
 
 }
 
-Flamme::Flamme(Enemie *teki, int x, int y) : m_autorisationCaseX(0), m_autorisationCaseY(0), m_deplacement(0.0), m_posFlammeX(x), m_posFlammeY(y), m_alive(true), m_direction(0), m_destructionArbre(false), m_posArbreX(0), m_posArbreY(0), m_boucleAff(0)
+Flamme::Flamme(Enemie *teki, int x, int y) : m_autorisationCaseX(0), m_autorisationCaseY(0), m_deplacement(0.0), m_posFlammeX((float)x), m_posFlammeY((float)y), m_alive(true), m_direction(0), m_destructionArbre(false), m_posArbreX(0), m_posArbreY(0), m_boucleAff(0)
 {
 
-
+	fClock.restart();
 	tempsPasse = 0;
-	m_verifPosX = m_posFlammeX;
-	m_verifPosX %= 32;
 
-	m_verifPosY = m_posFlammeY;
-	m_verifPosY %= 32;
-
+	m_verifPosX = x % 32;	
+	m_verifPosY = y % 32;
 
 	m_deplacement = fTime.asMilliseconds() * 0.064;
 
 	char direction = 0;
 
 	direction = teki->getDirection();
+
+	//Temporaire
+	m_posFlammeX += 32;
 
 	switch (direction)
 	{
@@ -91,8 +92,6 @@ Flamme::Flamme(Enemie *teki, int x, int y) : m_autorisationCaseX(0), m_autorisat
 
 	}//FIN SWITCH
 
-
-
 }
 
 
@@ -113,7 +112,16 @@ void Flamme::brulerArbre(sf::RenderWindow &window, Enemie *teki, Map &map)
 		map.arbreEnFeu_2.setPosition((float)m_posArbreX, (float)m_posArbreY);
 		fBoucle = 0;
 
-
+		//On indique qu'on ne veut plus le sprite de l'arbre
+		//map.setPosArbreEnFeu((int)m_posArbreX/32, (int)m_posArbreY/32);
+		if (map.setPosArbreVersSable((int)m_posArbreX / 32, (int)m_posArbreY / 32))
+		{
+			std::cout << "ARBRE REMPLAC" << accent << " PAR SABLE !" << std::endl;
+		}
+		else
+		{
+			std::cout << "ECHEC DU REMPLACEMENT DE L'ARBRE PAR LE SABLE" << std::endl;
+		}
 	}
 
 	if (fTime.asMilliseconds() < 800)
@@ -140,7 +148,7 @@ void Flamme::brulerArbre(sf::RenderWindow &window, Enemie *teki, Map &map)
 			teki->set_animAttaqueFini(true);
 			teki->set_brulerArbreAnimFini(true);
 			m_alive = false;
-
+		/*	
 			if (map.setPosArbreVersSable((int)(m_posArbreX / 32), (int)(m_posArbreY / 32)) == true)
 			{
 				std::cout << "ARBRE REMPLAC" << accent << " PAR SABLE !" << std::endl;
@@ -150,7 +158,7 @@ void Flamme::brulerArbre(sf::RenderWindow &window, Enemie *teki, Map &map)
 			{
 				std::cout << "ECHEC DU REMPLACEMENT DE L'ARBRE PAR LE SABLE" << std::endl;
 
-			}
+			}*/
 		}
 
 	}
@@ -158,10 +166,28 @@ void Flamme::brulerArbre(sf::RenderWindow &window, Enemie *teki, Map &map)
 
 }
 
+void Flamme::testDeplacement(Enemie *teki, Map &map)
+{
+	int posX = (int)m_posFlammeX + CHECK_DISTANCE; //m_autorisationCaseX + 32;	
+
+	if ((int)(posX / 32) >= 10)           //AVANT TOUTE VERIF ON CHECK SI ON SORT PAS DU CADRE DE JEU
+	{
+
+		teki->get_flamme()->m_alive = false;
+		teki->set_demandeAttaque(false);
+		teki->set_animAttaqueFini(true);
+		return;
+	}
+
+	m_autorisationCaseX += CHECK_DISTANCE;
+
+
+}
+
 void Flamme::verifDeplacement(Enemie *teki, Map &map)
 {
 
-	int posX = m_posFlammeX + m_autorisationCaseX + 32;
+	int posX = m_posFlammeX + CHECK_DISTANCE;  //check a 10px
 
 	if ((int)(posX / 32) >= 10)           //AVANT TOUTE VERIF ON CHECK SI ON SORT PAS DU CADRE DE JEU
 	{
@@ -174,13 +200,13 @@ void Flamme::verifDeplacement(Enemie *teki, Map &map)
 	
 	if (m_verifPosY > 16)
 	{
-		m_verifCaseMap = map.getLevel1Pos((int)((m_posFlammeX + 32 + m_autorisationCaseX) / 32), (int)((m_posFlammeY + 32) / 32)); //VERIF CASE X+32, Y+32
+		m_verifCaseMap = map.getLevel1Pos((int)((m_posFlammeX + CHECK_DISTANCE) / 32), (int)((m_posFlammeY + 32) / 32)); //VERIF CASE X+32, Y+32
 
 		if (m_verifCaseMap == 'A') // SI ARBRE UP
 		{
 			//BRULER ARBRE
 			m_destructionArbre = true;
-			m_posArbreX = m_posFlammeX + 32 + m_autorisationCaseX;
+			m_posArbreX = m_posFlammeX + CHECK_DISTANCE;
 			m_posArbreY = m_posFlammeY + 32;
 			m_posArbreX = floor(m_posArbreX / 32) * 32;
 			m_posArbreY = ceil(m_posArbreY / 32) * 32;
@@ -188,14 +214,14 @@ void Flamme::verifDeplacement(Enemie *teki, Map &map)
 		else if (m_verifCaseMap == '0') // SI DU SABLE DONC ON CHECK LA SUITE
 		{
 
-			m_verifCaseMap = map.getLevel1Pos((int)((m_posFlammeX + 32 + m_autorisationCaseX) / 32), (int)(m_posFlammeY / 32)); // CHECK LA CASE DU DESSUS SOIT X+32, Y
+			m_verifCaseMap = map.getLevel1Pos((int)((m_posFlammeX + CHECK_DISTANCE) / 32), (int)(m_posFlammeY / 32)); // CHECK LA CASE DU DESSUS SOIT X+32, Y
 
 			if (m_verifCaseMap == 'A') // SI ARBRE UP
 			{
 				//BRULER ARBRE
 
 				m_destructionArbre = true;
-				m_posArbreX = m_posFlammeX + 32 + m_autorisationCaseX;
+				m_posArbreX = m_posFlammeX + CHECK_DISTANCE;
 				m_posArbreY = m_posFlammeY;
 				m_posArbreX = floor(m_posArbreX / 32) * 32;
 				m_posArbreY = ceil(m_posArbreY / 32) * 32;
@@ -204,7 +230,7 @@ void Flamme::verifDeplacement(Enemie *teki, Map &map)
 			else if (m_verifCaseMap == '0') // SINON AVANCE
 			{
 				//AUTORISATION AVANCER DE 1
-				m_autorisationCaseX += 32;
+				m_autorisationCaseX += CHECK_DISTANCE;
 			}
 
 		}
@@ -220,27 +246,27 @@ void Flamme::verifDeplacement(Enemie *teki, Map &map)
 
 	else if (m_verifPosY <= 16)
 	{
-		m_verifCaseMap = map.getLevel1Pos((int)((m_posFlammeX + 32 + m_autorisationCaseX) / 32), (int)(m_posFlammeY / 32)); //VERIF CASE X+32, Y
+		m_verifCaseMap = map.getLevel1Pos((int)((m_posFlammeX + CHECK_DISTANCE) / 32), (int)(m_posFlammeY / 32)); //VERIF CASE X+32, Y
 
 		if (m_verifCaseMap == 'A') // ARBRE UP
 		{
 			//BRULER ARBRE
 
 			m_destructionArbre = true;
-			m_posArbreX = m_posFlammeX + 32 + m_autorisationCaseX;
+			m_posArbreX = m_posFlammeX + CHECK_DISTANCE;
 			m_posArbreY = m_posFlammeY;
 			m_posArbreY = floor(m_posArbreY / 32) * 32;
 			m_posArbreX = floor(m_posArbreX / 32) * 32;
 		}
 		else if (m_verifCaseMap == '0') // DU SABLE DONC ON CHECK LA SUITE
 		{
-			m_verifCaseMap = map.getLevel1Pos((int)((m_posFlammeX + 32 + m_autorisationCaseX) / 32), (int)((m_posFlammeY + 32) / 32)); // CHECK LA CASE DU DESSUS SOIT X+32, Y+32
+			m_verifCaseMap = map.getLevel1Pos((int)((m_posFlammeX + CHECK_DISTANCE) / 32), (int)((m_posFlammeY + 32) / 32)); // CHECK LA CASE DU DESSUS SOIT X+32, Y+32
 
 			if (m_verifCaseMap == 'A') // ARBRE UP
 			{
 				//BRULER ARBRE
 				m_destructionArbre = true;
-				m_posArbreX = m_posFlammeX + 32 + m_autorisationCaseX;
+				m_posArbreX = m_posFlammeX + CHECK_DISTANCE;
 				m_posArbreY = m_posFlammeY + 32;
 				m_posArbreY = floor(m_posArbreY / 32) * 32;
 				m_posArbreX = floor(m_posArbreX / 32) * 32;
@@ -248,7 +274,7 @@ void Flamme::verifDeplacement(Enemie *teki, Map &map)
 			else if (m_verifCaseMap == '0')
 			{
 				//AUTORISATION AVANCER DE 1
-				m_autorisationCaseX += 32;
+				m_autorisationCaseX += CHECK_DISTANCE;
 			}
 
 		}
@@ -271,23 +297,19 @@ void Flamme::affichage(sf::RenderWindow& window, Enemie* teki, Map& map)
 	}
 	//m_boucleAff = teki->get_flamme()->m_boucleAff;
 	fTime = fClock.getElapsedTime();
-	tempsPasse = fTime.asSeconds();
+	tempsPasse = fTime.asSeconds();		
+	
+	m_deplacement = tempsPasse * 2.5f; //Vitesse	
 
-	if (tempsPasse > 2.0f)
-	{	
-		fTime = fClock.restart();
-		fTime = fClock.getElapsedTime();
-		tempsPasse = fTime.asSeconds();
-	}
+	m_posFlammeX = m_posFlammeX + m_deplacement;  //+ (float)m_autorisationCaseX; //+ 32;
+	
+			m_rotaAngle = 10.0f;		
 		
-	
-	m_deplacement = tempsPasse * 2.0f;
-
-	float X = (float)m_posFlammeX + (float)m_deplacement + (float)m_autorisationCaseX + 32;
-	
-		teki->boule_1.setPosition(X, (float)m_posFlammeY);
-
-		window.draw(teki->boule_1);
+			teki->boule_1.rotate(m_rotaAngle);
+			teki->boule_1.setPosition(m_posFlammeX, m_posFlammeY+17.0f);
+			window.draw(teki->boule_1);
+		
+		
 	
 		/*
 		teki->boule_2.setPosition((float)(m_posFlammeX + m_deplacement + m_autorisationCaseX), (float)m_posFlammeY);

@@ -11,15 +11,12 @@ class Flamme;
 
 extern bool attaquer;
 
-
-
-
 class Enemie :	public PersonnageBase
 {
 public:
 	Enemie();
-	Enemie(int x,int y,Map &map);
-	Enemie(int x, int y, Map &map, bool boss);
+	Enemie(std::string nom,int x,int y,Map &map);
+	Enemie(std::string nom,int x, int y, Map &map, bool boss);
 	
 	
 virtual ~Enemie();
@@ -82,7 +79,7 @@ sf::Sprite peppaSprite;
 //sf::Sprite boule_2;  EN PUBLIC
 sf::Sprite transeSprite;
 
-
+std::string m_nom;
 bool m_animDegatsON;
 bool m_attacked;
 bool m_boss;

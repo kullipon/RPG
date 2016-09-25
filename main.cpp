@@ -38,14 +38,16 @@ int main()
 	Map map(toto);
 
 	Enemie *teki1 = 0;
-	teki1 = new Enemie(64, 128, map);
+	teki1 = new Enemie("teki",64, 128, map);
 
 	Enemie *teki2 = 0;
-	teki2 = new Enemie(256, 96, map);
+	teki2 = new Enemie("teki2",256, 96, map);
 
 	Enemie *peppa = 0;
 	bool peppaPopped = false;
 	bool hacheUp = toto->getHacheUp();
+
+	
 
 	//ObAttaquer ObAttaque;
 
@@ -347,7 +349,7 @@ while (window.isOpen())
 			if (peppa == 0 && peppaPopped == false)
 			{
 				//POP PEPPA (boss de fin)
-				peppa = new Enemie(96, 96, map, true);
+				peppa = new Enemie("peppa",96, 96, map, true);
 				peppaPopped = true;
 			}
 

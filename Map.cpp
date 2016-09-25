@@ -66,6 +66,11 @@ Map::Map(Joueur *joueur1) : m_X(11) , m_Y(11) , m_boucle(0) {
 Map::~Map() {
 }
 
+void Map::setPosArbreEnFeu(int x, int y)
+{
+	level1[x][y] = 'B';	
+}
+
 void Map::affichage(sf::RenderWindow &window) {
 
 
@@ -141,6 +146,10 @@ void Map::affichage(sf::RenderWindow &window) {
 			      mont_haut_droite.setPosition(i * 32.0f , j * 32.0f) ;
 			      window.draw(mont_haut_droite) ;
 			      break ;
+
+			 case 'B':
+				 //En cas d'arbre en feu (on affiche rien)			 
+				 break;
 			      /*case 'E':
 				      //anim Teki
 				      //teki1.setPosition(i*32.0f,j*32.0f);
@@ -263,7 +272,7 @@ bool Map::okForMove(PersonnageBase *perso , char direction , int variation) {
 }
 
 char Map::getLevel1Pos(int x , int y) {
-     return level1[x][y] ;
+     return level1[x][y];
 
 }
 

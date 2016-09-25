@@ -14,26 +14,27 @@ public:
 	~Flamme();
 
 	int get_autorisationCaseX();
-                  int get_autorisationCaseY();
+    int get_autorisationCaseY();
 	bool get_alive();
 	char get_direction();
 	bool get_destructionArbre();
 	
 
-                void brulerArbre(sf::RenderWindow &window, Enemie *teki, Map &map);
-                void verifDeplacement(Enemie *teki,Map &map);
-                 void affichage(sf::RenderWindow &window, Enemie *teki,Map &map);
-        
+    void brulerArbre(sf::RenderWindow &window, Enemie *teki, Map &map);
+    void verifDeplacement(Enemie *teki,Map &map);
+    void affichage(sf::RenderWindow &window, Enemie *teki,Map &map);
+    
+	void testDeplacement(Enemie *teki, Map &map); //Method debug a remove
 
 
 private:
 
-
-	int m_posFlammeX;
-	int m_posFlammeY;
-	double m_deplacement;
-	int m_verifPosX;
-	int m_verifPosY;
+	float const CHECK_DISTANCE = 12.0f;
+	float m_posFlammeX;
+	float m_posFlammeY;
+	float m_deplacement;
+	int m_verifPosX; 
+	int m_verifPosY; 
 	int m_autorisationCaseX;
     int m_autorisationCaseY;
 	char m_verifCaseMap;
@@ -46,6 +47,7 @@ private:
     int m_boucleAff;
     sf::Clock fClock;
 	float tempsPasse;
+	float m_rotaAngle;
 
 };
 

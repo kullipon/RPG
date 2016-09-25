@@ -24,6 +24,7 @@ public:
 	bool setEnemiePos(int x,int y);
 	bool setPostoZero(int x,int y);
 	bool setPosArbreVersSable(int x, int y);
+	void setPosArbreEnFeu(int x, int y);
 	//bool moveEnemiePos(Enemie *teki,int x,int y,int axe);
 	//bool okForMove(PersonnageBase *perso,int x, int y,int axe);
 

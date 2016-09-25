@@ -478,7 +478,7 @@ void Hache::deplacement(Guerrier *toto,Enemie *teki1,Enemie *teki2,sf::Clock &ha
 	{
 	case 'N':
 	{
-		m_posY -= (int)(hacheTime.asSeconds()+1) * 5;
+		m_posY -= (int)(hacheTime.asSeconds()+1) * 3; //past -> *5
 
 		//on verifie a chaque espace de 32 si un enemie est présent
 		if (m_posY + m_lastPosY >= 32 )
